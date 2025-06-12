@@ -5,7 +5,6 @@ import           Hakyll
 
 
 --------------------------------------------------------------------------------
-
 config :: Configuration
 config = defaultConfiguration
   { destinationDirectory = "docs"
@@ -13,19 +12,20 @@ config = defaultConfiguration
 
 main :: IO ()
 main = hakyllWith config $ do
+    match "fonts/*" $ do
+        route   idRoute
+        compile copyFileCompiler
+
+
     match "images/*" $ do
         route   idRoute
         compile copyFileCompiler
+
 
     match "css/*" $ do
         route   idRoute
         compile compressCssCompiler
 
-    match (fromList ["about.rst", "contact.markdown"]) $ do
-        route   $ setExtension "html"
-        compile $ pandocCompiler
-            >>= loadAndApplyTemplate "templates/default.html" defaultContext
-            >>= relativizeUrls
 
     match "posts/*" $ do
         route $ setExtension "html"
@@ -33,6 +33,7 @@ main = hakyllWith config $ do
             >>= loadAndApplyTemplate "templates/post.html"    postCtx
             >>= loadAndApplyTemplate "templates/default.html" postCtx
             >>= relativizeUrls
+
 
     create ["archive.html"] $ do
         route idRoute
@@ -49,8 +50,8 @@ main = hakyllWith config $ do
                 >>= relativizeUrls
 
 
-    match "index.html" $ do
-        route idRoute
+    match "index.md" $ do
+        route $ setExtension "html"
         compile $ do
             posts <- recentFirst =<< loadAll "posts/*"
             let indexCtx =
@@ -58,7 +59,7 @@ main = hakyllWith config $ do
                     constField "title" "Home"                `mappend`
                     defaultContext
 
-            getResourceBody
+            pandocCompiler
                 >>= applyAsTemplate indexCtx
                 >>= loadAndApplyTemplate "templates/default.html" indexCtx
                 >>= relativizeUrls

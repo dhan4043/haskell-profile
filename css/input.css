@@ -1,0 +1,182 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'icomoon';
+  src: url('/fonts/icomoon.woff') format('woff'),
+       url('/fonts/icomoon.svg') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-mail:before {
+  content: "\e901";
+}
+.icon-github:before {
+  content: "\eab0";
+}
+
+header {
+  @apply flex flex-wrap my-4 sm:my-10 justify-between sm:justify-center;
+}
+
+body {
+  @apply flex flex-col min-h-screen p-4 sm:p-4 max-w-2xl mx-auto text-slate-800 bg-amber-50;
+}
+
+footer a {
+  @apply text-yellow-600;
+}
+
+.footer-icon {
+  @apply text-3xl text-slate-800 px-1 mx-3;
+}
+
+.footer-icon:hover {
+  @apply text-yellow-600;
+}
+
+article h1 {
+  @apply text-3xl font-bold tracking-tight mt-6 mb-4;
+}
+
+article h2 {
+  @apply text-2xl font-bold mt-6 mb-4;
+}
+
+article h3 {
+  @apply text-xl font-bold mb-4;
+}
+
+article h4 {
+  @apply text-base font-bold mb-4 leading-none;
+}
+
+article p {
+  @apply mb-6;
+}
+
+article a {
+  @apply font-medium text-yellow-600 underline hover:no-underline;
+}
+
+article hr {
+  @apply my-8 h-px border-0 bg-zinc-300;
+}
+
+article ul,
+article ol {
+  @apply mb-5 space-y-1 list-inside;
+}
+
+article ul ul,
+article ol ol {
+  @apply pl-5;
+}
+
+article ul {
+  @apply list-disc;
+}
+
+article ol {
+  @apply list-decimal;
+}
+
+article table {
+  @apply text-sm text-left text-gray-500;
+}
+
+article tr.header {
+  @apply text-xs text-gray-700 uppercase bg-gray-50;
+}
+
+article tr {
+  @apply bg-white border-b;
+}
+
+article th {
+  @apply py-3 px-6
+}
+
+article td {
+  @apply py-4 px-6
+}
+
+article img {
+  @apply mx-auto;
+}
+
+article figcaption {
+  @apply mt-2 mb-5 text-sm text-center text-gray-500;
+}
+
+.entry-list {
+  @apply list-none m-0 space-y-2 max-w-xl;
+}
+
+.entry-list img, .entry-list .img-placeholder {
+  @apply h-[150px] w-full object-cover rounded-lg my-3 filter grayscale brightness-75;
+}
+
+.entry-list .img-placeholder {
+  @apply bg-yellow-300 grayscale-0 brightness-75;
+}
+
+.entry-list .metadata {
+  @apply flex justify-between;
+}
+
+.entry-list .date {
+  @apply text-gray-700 font-mono text-sm;
+}
+
+.entry-list .title {
+  @apply text-inherit text-base decoration-dotted underline underline-offset-2 hover:decoration-solid;
+}
+
+.resume { 
+  @apply max-w-2xl mx-auto my-10 grid grid-cols-6 gap-2 sm:gap-4;
+}
+
+.resume > h2 { 
+  @apply font-bold text-base mt-4 sm:mt-0;
+}
+
+.resume > div {
+  @apply col-span-6 sm:col-span-5;
+}
+
+.resume .currently a {
+  @apply font-medium;
+}
+
+.resume .currently a,
+.resume .interests a {
+  @apply text-yellow-600 hover:underline;
+}
+
+.badges ul {
+  @apply flex flex-wrap gap-2;
+}
+
+.badges li {
+  @apply py-1 px-2 text-sm font-medium rounded border border-gray-500 hover:bg-amber-100 hover:cursor-pointer;
+}
+
+#logo {
+  @apply text-3xl sm:text-5xl tracking-tight font-bold;
+}

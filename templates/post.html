@@ -1,8 +1,15 @@
-<div class="info">
-    Posted on $date$
-    $if(author)$
-        by $author$
-    $endif$
-</div>
-
-$body$
+<article>
+    <section class="header">
+        <div class="text-sm text-slate-600">
+            $date$
+        </div>
+        <h1 class="my-1">$title$</h1>
+    </section>
+    <hr>
+    <section>
+        $body$
+        $if(last-edited)$
+        Last modified $last-edited$
+        $endif$
+    </section>
+</article>
