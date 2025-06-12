@@ -1,2 +1,3 @@
 # haskell-profile
-Personal website built with Haskell and Hakyll.
+
+My personal website built with Haskell, Hakyll, and TailwindCSS.

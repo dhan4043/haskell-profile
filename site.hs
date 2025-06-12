@@ -5,14 +5,8 @@ import           Hakyll
 
 
 --------------------------------------------------------------------------------
-
-config :: Configuration
-config = defaultConfiguration
-  { destinationDirectory = "docs"
-  }
-
 main :: IO ()
-main = hakyllWith config $ do
+main = hakyll $ do
     match "images/*" $ do
         route   idRoute
         compile copyFileCompiler
@@ -55,6 +49,7 @@ main = hakyllWith config $ do
             posts <- recentFirst =<< loadAll "posts/*"
             let indexCtx =
                     listField "posts" postCtx (return posts) `mappend`
+                    constField "title" "Home"                `mappend`
                     defaultContext
 
             getResourceBody
@@ -62,7 +57,7 @@ main = hakyllWith config $ do
                 >>= loadAndApplyTemplate "templates/default.html" indexCtx
                 >>= relativizeUrls
 
-    match "templates/*" $ compile templateBodyCompiler
+    match "templates/*" $ compile templateCompiler
 
 
 --------------------------------------------------------------------------------
@@ -70,3 +65,4 @@ postCtx :: Context String
 postCtx =
     dateField "date" "%B %e, %Y" `mappend`
     defaultContext
+
