@@ -231,10 +231,6 @@
   .text-center {
     text-align: center;
   }
-  .text-6xl {
-    font-size: var(--text-6xl);
-    line-height: var(--tw-leading, var(--text-6xl--line-height));
-  }
   .text-sm {
     font-size: var(--text-sm);
     line-height: var(--tw-leading, var(--text-sm--line-height));
@@ -252,7 +248,7 @@
 }
 @font-face {
   font-family: 'icomoon';
-  src: url('/fonts/icomoon.woff') format('woff'), url('/fonts/icomoon.svg') format('svg');
+  src: url('../fonts/icomoon.woff') format('woff'), url('../fonts/icomoon.svg') format('svg'), url('../fonts/icomoon.ttf') format('ttf'), url('../fonts/icomoon.eot') format('eot');
   font-weight: normal;
   font-style: normal;
   font-display: block;
