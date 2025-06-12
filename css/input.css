@@ -3,7 +3,9 @@
 @font-face {
   font-family: 'icomoon';
   src: url('/fonts/icomoon.woff') format('woff'),
-       url('/fonts/icomoon.svg') format('svg');
+       url('/fonts/icomoon.svg') format('svg'),
+       url('/fonts/icomoon.ttf') format('ttf'),
+       url('/fonts/icomoon.eot') format('eot');
   font-weight: normal;
   font-style: normal;
   font-display: block;
