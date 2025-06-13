@@ -33,8 +33,8 @@ main = hakyllWith config $ do
             >>= loadAndApplyTemplate "templates/post.html"    postCtx
             >>= loadAndApplyTemplate "templates/default.html" postCtx
             >>= relativizeUrls
-
     
+
     match "404.html" $ do
         route   $ setExtension "html"
         compile $ pandocCompiler

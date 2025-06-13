@@ -13,6 +13,7 @@
     --color-slate-600: oklch(44.6% 0.043 257.281);
     --color-slate-800: oklch(27.9% 0.041 260.031);
     --color-gray-50: oklch(98.5% 0.002 247.839);
+    --color-gray-400: oklch(70.7% 0.022 261.325);
     --color-gray-500: oklch(55.1% 0.027 264.364);
     --color-gray-700: oklch(37.3% 0.034 259.733);
     --color-zinc-300: oklch(87.1% 0.006 286.286);
@@ -34,7 +35,9 @@
     --text-3xl--line-height: calc(2.25 / 1.875);
     --text-5xl: 3rem;
     --text-5xl--line-height: 1;
+    --font-weight-normal: 400;
     --font-weight-medium: 500;
+    --font-weight-semibold: 600;
     --font-weight-bold: 700;
     --tracking-tight: -0.025em;
     --radius-lg: 0.5rem;
@@ -188,11 +191,38 @@
   }
 }
 @layer utilities {
+  .absolute {
+    position: absolute;
+  }
+  .relative {
+    position: relative;
+  }
+  .-start-1\.5 {
+    inset-inline-start: calc(var(--spacing) * -1.5);
+  }
   .my-1 {
     margin-block: calc(var(--spacing) * 1);
   }
+  .ms-4 {
+    margin-inline-start: calc(var(--spacing) * 4);
+  }
+  .mt-1\.5 {
+    margin-top: calc(var(--spacing) * 1.5);
+  }
   .mt-12 {
     margin-top: calc(var(--spacing) * 12);
+  }
+  .mb-0 {
+    margin-bottom: calc(var(--spacing) * 0);
+  }
+  .mb-1 {
+    margin-bottom: calc(var(--spacing) * 1);
+  }
+  .mb-4 {
+    margin-bottom: calc(var(--spacing) * 4);
+  }
+  .mb-5 {
+    margin-bottom: calc(var(--spacing) * 5);
   }
   .mb-8 {
     margin-bottom: calc(var(--spacing) * 8);
@@ -202,6 +232,12 @@
   }
   .inline {
     display: inline;
+  }
+  .h-3 {
+    height: calc(var(--spacing) * 3);
+  }
+  .w-3 {
+    width: calc(var(--spacing) * 3);
   }
   .flex-auto {
     flex: auto;
@@ -222,11 +258,36 @@
       margin-block-end: calc(calc(var(--spacing) * 4) * calc(1 - var(--tw-space-y-reverse)));
     }
   }
+  .rounded-full {
+    border-radius: calc(infinity * 1px);
+  }
+  .border {
+    border-style: var(--tw-border-style);
+    border-width: 1px;
+  }
+  .border-s {
+    border-inline-start-style: var(--tw-border-style);
+    border-inline-start-width: 1px;
+  }
+  .border-dashed {
+    --tw-border-style: dashed;
+    border-style: dashed;
+  }
+  .border-gray-400 {
+    border-color: var(--color-gray-400);
+  }
+  .bg-gray-400 {
+    background-color: var(--color-gray-400);
+  }
   .pt-6 {
     padding-top: calc(var(--spacing) * 6);
   }
   .text-center {
     text-align: center;
+  }
+  .text-base {
+    font-size: var(--text-base);
+    line-height: var(--tw-leading, var(--text-base--line-height));
   }
   .text-sm {
     font-size: var(--text-sm);
@@ -236,11 +297,26 @@
     font-size: var(--text-xl);
     line-height: var(--tw-leading, var(--text-xl--line-height));
   }
+  .leading-none {
+    --tw-leading: 1;
+    line-height: 1;
+  }
+  .font-normal {
+    --tw-font-weight: var(--font-weight-normal);
+    font-weight: var(--font-weight-normal);
+  }
+  .font-semibold {
+    --tw-font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-semibold);
+  }
   .text-inherit {
     color: inherit;
   }
   .text-slate-600 {
     color: var(--color-slate-600);
+  }
+  .text-slate-800 {
+    color: var(--color-slate-800);
   }
 }
 @font-face {
@@ -265,9 +341,6 @@
 }
 .icon-github:before {
   content: "\eab0";
-}
-.icon-folder:before {
-  content: "\e92f";
 }
 header {
   margin-block: calc(var(--spacing) * 4);
@@ -552,6 +625,15 @@ article figcaption {
   inherits: false;
   initial-value: 0;
 }
+@property --tw-border-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
+}
+@property --tw-leading {
+  syntax: "*";
+  inherits: false;
+}
 @property --tw-font-weight {
   syntax: "*";
   inherits: false;
@@ -559,15 +641,6 @@ article figcaption {
 @property --tw-tracking {
   syntax: "*";
   inherits: false;
-}
-@property --tw-leading {
-  syntax: "*";
-  inherits: false;
-}
-@property --tw-border-style {
-  syntax: "*";
-  inherits: false;
-  initial-value: solid;
 }
 @property --tw-blur {
   syntax: "*";
@@ -626,10 +699,10 @@ article figcaption {
   @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
     *, ::before, ::after, ::backdrop {
       --tw-space-y-reverse: 0;
+      --tw-border-style: solid;
+      --tw-leading: initial;
       --tw-font-weight: initial;
       --tw-tracking: initial;
-      --tw-leading: initial;
-      --tw-border-style: solid;
       --tw-blur: initial;
       --tw-brightness: initial;
       --tw-contrast: initial;

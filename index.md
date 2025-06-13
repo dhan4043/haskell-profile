@@ -10,6 +10,10 @@ BA in Computer Science with a minor in Sustainability @ the University of Maryla
 ::: { .experience }
 - Teaching assistant for the University of Maryland's research program for first-year students (FIRE).
 :::
+## Timeline
+::: { .timeline }
+$partial("templates/timeline.html")$
+:::
 ## Certifications
 ::: { .certification }
 - Microsoft credential
