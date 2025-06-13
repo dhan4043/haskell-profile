@@ -7,10 +7,6 @@ title: David Han
 BA in Computer Science with a minor in Sustainability @ the University of Maryland
 :::
 ## Experience
-::: { .experience }
-- Teaching assistant for the University of Maryland's research program for first-year students (FIRE).
-:::
-## Timeline
 ::: { .timeline }
 $partial("templates/timeline.html")$
 :::
@@ -41,7 +37,7 @@ Pursuing CompTIA A+ certification.
 - Sound design
 :::
 
-## Projects
+## Posts
 ::: { .posts }
 $partial("templates/post-list.html")$
 :::
