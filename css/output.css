@@ -269,10 +269,6 @@
     border-inline-start-style: var(--tw-border-style);
     border-inline-start-width: 1px;
   }
-  .border-dashed {
-    --tw-border-style: dashed;
-    border-style: dashed;
-  }
   .border-gray-400 {
     border-color: var(--color-gray-400);
   }
@@ -284,6 +280,9 @@
   }
   .text-center {
     text-align: center;
+  }
+  .font-mono {
+    font-family: var(--font-mono);
   }
   .text-base {
     font-size: var(--text-base);
@@ -308,6 +307,9 @@
   .font-semibold {
     --tw-font-weight: var(--font-weight-semibold);
     font-weight: var(--font-weight-semibold);
+  }
+  .text-gray-400 {
+    color: var(--color-gray-400);
   }
   .text-inherit {
     color: inherit;
@@ -527,7 +529,7 @@ article figcaption {
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   line-height: var(--tw-leading, var(--text-sm--line-height));
-  color: var(--color-gray-700);
+  color: var(--color-gray-400);
 }
 .entry-list .title {
   font-size: var(--text-base);

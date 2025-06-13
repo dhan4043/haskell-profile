@@ -149,7 +149,7 @@ article figcaption {
 }
 
 .entry-list .date {
-  @apply text-gray-700 font-mono text-sm;
+  @apply text-gray-400 font-mono text-sm;
 }
 
 .entry-list .title {
