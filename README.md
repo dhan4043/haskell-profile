@@ -8,6 +8,9 @@ My personal website built with Haskell, Hakyll, and TailwindCSS.
 # Verify correct branch
 git checkout master
 
+# Compile stylesheet (if any changes were made) 
+npx @tailwindcss/cli -i ./css/input.css -o ./css/output.css
+
 # Build new files
 stack exec haskell-profile clean
 stack exec haskell-profile build

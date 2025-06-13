@@ -23,6 +23,7 @@ Pursuing CompTIA A+ certification.
 ::: { .badges }
 - [Email][email]
 - [GitHub][github]
+- [Portfolium][portfolium]
 :::
 
 ## Interests
@@ -44,3 +45,4 @@ $partial("templates/post-list.html")$
 
 [email]: mailto:dhan4043@gmail.com
 [github]: https://github.com/dhan4043
+[portfolium]: https://portfolium.com/DavidHan4311

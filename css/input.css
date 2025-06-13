@@ -1,4 +1,10 @@
+@import "https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap";
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Roboto", sans-serif;
+  --font-mono: "Roboto Mono", monospace;
+}
 
 @font-face {
   font-family: 'icomoon';
