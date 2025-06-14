@@ -15,6 +15,21 @@ $partial("templates/timeline.html")$
 - Microsoft credential
 - R data science credential
 :::
+## Skills
+::: { .skills }
+- Python 
+- Haskell 
+- C
+- Java (some proficiency)
+- R (some proficiency)
+- JavaScript 
+- Web development principles
+- Data science principles
+- Cryptography
+- Data privacy principles
+- Web vulnerabilities
+- Microsoft Azure
+:::
 ## Currently
 ::: { .currently }
 Pursuing CompTIA A+ certification.
@@ -30,11 +45,13 @@ Pursuing CompTIA A+ certification.
 ::: { .interests }
 - Full-stack development
 - Functional programming
-- Compilers / language design
+- Compilers / Programming language design
 - Coffee
 - Cooking / Baking
 - Guitar
 - Sound design
+- Environmental policy
+- Online privacy law
 :::
 
 ## Posts

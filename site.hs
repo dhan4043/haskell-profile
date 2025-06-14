@@ -71,6 +71,7 @@ main = hakyllWith config $ do
                 >>= loadAndApplyTemplate "templates/default.html" indexCtx
                 >>= relativizeUrls
 
+
     match "templates/*" $ compile templateCompiler
 
 
