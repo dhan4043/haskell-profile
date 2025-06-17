@@ -4,7 +4,11 @@ title: David Han
 ::: { .resume }
 ## Education
 ::: { .education }
-BA in Computer Science with a minor in Sustainability @ the University of Maryland
+University of Maryland, College Park
+Bachelor of Science in Computer Science
+Minor in Sustainability Studies
+August 2021 - May 2025
+3.81 GPA
 :::
 ## Experience
 ::: { .timeline }
@@ -12,8 +16,8 @@ $partial("templates/timeline.html")$
 :::
 ## Certifications
 ::: { .certification }
-- Microsoft credential
-- R data science credential
+- Microsoft Applied Skills, Microsoft Defender XDR
+- [FIRE: Researcher Credential][fire-cred]
 :::
 ## Skills
 ::: { .skills }
@@ -26,9 +30,11 @@ $partial("templates/timeline.html")$
 - Web development principles
 - Data science principles
 - Cryptography
-- Data privacy principles
+- Data / user privacy
+- Computer networking
 - Web vulnerabilities
 - Microsoft Azure
+- Microsoft 365
 :::
 ## Currently
 ::: { .currently }
@@ -45,13 +51,15 @@ Pursuing CompTIA A+ certification.
 ::: { .interests }
 - Full-stack development
 - Functional programming
-- Compilers / Programming language design
+- Compilers / programming language design
+- Environmental policy
+- Data security
+- Online privacy law
+- Baseball analytics
 - Coffee
-- Cooking / Baking
+- Cooking / baking
 - Guitar
 - Sound design
-- Environmental policy
-- Online privacy law
 :::
 
 ## Posts
@@ -63,3 +71,4 @@ $partial("templates/post-list.html")$
 [email]: mailto:dhan4043@gmail.com
 [github]: https://github.com/dhan4043
 [portfolium]: https://portfolium.com/DavidHan4311
+[fire-cred]: https://portfolium.com/DavidHan4311/badge/researcher-fire-first-year-innovation-and-research-experience
