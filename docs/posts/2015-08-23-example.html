@@ -54,7 +54,7 @@ VSCode sighs.
 </ul>
 <h3 id="creating-a-grammar-for-docaml">Creating a grammar for DOCaml</h3>
 <p>Like spoken or written languages, programming languages have grammars or rules that describe their structure. For example, when analyzing the sentence, “the child ran the race,” you can use grammatical conventions to derive its meaning:</p>
-<p><img src="../images/posts/parsed-sentence.png" alt="Parsed Sentence Example" />
+<p><img src="../images/parsed-sentence.png" alt="Parsed Sentence Example" />
 Assume Det = determiner, NP = noun phrase, VP = verb phrase, and S = sentence.</p>
 <p>In our case, DOCaml “sentences” are broken down like so:</p>
 <ul>
@@ -90,7 +90,7 @@ Assume Det = determiner, NP = noun phrase, VP = verb phrase, and S = sentence.</
 <p>Before transforming our plain text into a syntax tree, we have to divide it up into bite-sized pieces, or tokens that can be read by the parser. With plenty of regular expressions and conditionals, we can create a Google Apps Script program to turn our dirty code into a list of words that exist in DOCaml.</p>
 <h4 id="test-output">Test output</h4>
 <figure>
-<img src="../images/posts/docaml-lexer.png" alt="Lexer Example" />
+<img src="../images/docaml-lexer.png" alt="Lexer Example" />
 <figcaption aria-hidden="true">Lexer Example</figcaption>
 </figure>
 <h3 id="parsing">Parsing</h3>
@@ -108,7 +108,7 @@ Assume Det = determiner, NP = noun phrase, VP = verb phrase, and S = sentence.</
 <p>Before moving onto the interpreter, it is important to address the possibility of “bad”, grammatically incorrect code. Without going into too much detail, assume that the parser will throw an error if it reads a token that breaks the rules defined by our grammar. Okay, now let’s move on.</p>
 <h4 id="test-output-1">Test output</h4>
 <figure>
-<img src="../images/posts/docaml-parser.png" alt="Parser Example" />
+<img src="../images/docaml-parser.png" alt="Parser Example" />
 <figcaption aria-hidden="true">Parser Example</figcaption>
 </figure>
 <h3 id="interpreting">Interpreting</h3>
@@ -122,7 +122,7 @@ Assume Det = determiner, NP = noun phrase, VP = verb phrase, and S = sentence.</
 <p>Hooray! Our DOCaml interpreter is now complete and ready to be deployed to Google Docs!</p>
 <h4 id="test-output-2">Test output</h4>
 <figure>
-<img src="../images/posts/docaml-interp.png" alt="Interpreter Example" />
+<img src="../images/docaml-interp.png" alt="Interpreter Example" />
 <figcaption aria-hidden="true">Interpreter Example</figcaption>
 </figure>
 <h2 id="results">Results</h2>
@@ -130,22 +130,22 @@ Assume Det = determiner, NP = noun phrase, VP = verb phrase, and S = sentence.</
 To keep things short, I am going to skip over the UI portion of this project, which is unimportant. Here are some neat little examples of DOCaml in action. Go make something fun!</p>
 <h2 id="let-bindings">Let Bindings</h2>
 <figure>
-<img src="../images/posts/docaml-let.png" alt="Let Binding Example" />
+<img src="../images/docaml-let.png" alt="Let Binding Example" />
 <figcaption aria-hidden="true">Let Binding Example</figcaption>
 </figure>
 <h2 id="math">Math</h2>
 <figure>
-<img src="../images/posts/docaml-math.png" alt="Math Example" />
+<img src="../images/docaml-math.png" alt="Math Example" />
 <figcaption aria-hidden="true">Math Example</figcaption>
 </figure>
 <h2 id="function-definition-and-application">Function Definition and Application</h2>
 <figure>
-<img src="../images/posts/docaml-function.png" alt="Function Example" />
+<img src="../images/docaml-function.png" alt="Function Example" />
 <figcaption aria-hidden="true">Function Example</figcaption>
 </figure>
 <h2 id="type-checking-and-error-handling">Type Checking and Error Handling</h2>
 <figure>
-<img src="../images/posts/docaml-error.png" alt="Error Handling Example" />
+<img src="../images/docaml-error.png" alt="Error Handling Example" />
 <figcaption aria-hidden="true">Error Handling Example</figcaption>
 </figure>
         
