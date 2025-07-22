@@ -2,11 +2,6 @@
 title: Creating an Interpreter for Google Docs
 ---
 
-
-###### David Han
-
----
-
 > “Are you ready to become real editors?”
 > Vim gulps.
 > Emacs breathes heavily.
