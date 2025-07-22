@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>Example Post</title>
+        <title>Creating an Interpreter for Google Docs</title>
         <link rel="stylesheet" type="text/css" href="../css/output.css" />
         <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png" />
@@ -22,21 +22,134 @@
         <div class="text-sm font-mono text-slate-600">
             August 23, 2015
         </div>
-        <h1 class="my-1">Example Post</h1>
+        <h1 class="my-1">Creating an Interpreter for Google Docs</h1>
     </section>
     <hr>
     <section>
-        <p>Mauris in lorem nisl. Maecenas tempus facilisis ante, eget viverra nisl
-tincidunt et. Donec turpis lectus, mattis ac malesuada a, accumsan eu libero.
-Morbi condimentum, tortor et tincidunt ullamcorper, sem quam pretium nulla, id
-convallis lectus libero nec turpis. Proin dapibus nisi id est sodales nec
-ultrices tortor pellentesque.</p>
-<p>Vivamus vel nisi ac lacus sollicitudin vulputate
-ac ut ligula. Nullam feugiat risus eget eros gravida in molestie sapien euismod.
-Nunc sed hendrerit orci. Nulla mollis consequat lorem ac blandit. Ut et turpis
-mauris. Nulla est odio, posuere id ullamcorper sit amet, tincidunt vel justo.
-Curabitur placerat tincidunt varius. Nulla vulputate, ipsum eu consectetur
-mollis, dui nibh aliquam neque, at ultricies leo ligula et arcu.</p>
+        <h6 id="david-han">David Han</h6>
+<hr />
+<blockquote>
+<p>“Are you ready to become real editors?”
+Vim gulps.
+Emacs breathes heavily.
+Sublime nods nervously.
+VSCode sighs.
+“Yes, Google Docs,” they say in unison.</p>
+</blockquote>
+<h2 id="building-blocks">Building Blocks</h2>
+<h3 id="google-apps-script">Google Apps Script</h3>
+<p>This project was built entirely on Google Apps Script, a free code platform provided by Google. Google Apps Script and the Apps Script language (a subset of JavaScript) were created to provide inexperienced developers with <em>just</em> enough tools to create quick automations for Google Workspace products like Google Sheets.</p>
+<p>While most Apps Script programmers make useful, practical things, I did the complete opposite and created a code interpreter for Google Docs. Because why use a <em>real</em> text editor like Neovim when you can add the same functionality to Google Docs? Who doesn’t want to double space their code?</p>
+<h3 id="docaml">DOCaml</h3>
+<p>In order to make an interpreter, we first need a programming language to interpret. To keep things simple, I decided to create a miniature version of OCaml called DOCaml.</p>
+<h4 id="features">Features</h4>
+<ul>
+<li>Primitive types: String, Number, Bool</li>
+<li>Binary mathematical operations (*, /, +. -)</li>
+<li>Let expressions
+<ul>
+<li>Variable bindings</li>
+<li>Function definitions</li>
+</ul></li>
+<li>Function applications</li>
+<li>Line comments (Python/Ruby/R style)</li>
+</ul>
+<h3 id="creating-a-grammar-for-docaml">Creating a grammar for DOCaml</h3>
+<p>Like spoken or written languages, programming languages have grammars or rules that describe their structure. For example, when analyzing the sentence, “the child ran the race,” you can use grammatical conventions to derive its meaning:</p>
+<p><img src="../images/posts/parsed-sentence.png" alt="Parsed Sentence Example" />
+Assume Det = determiner, NP = noun phrase, VP = verb phrase, and S = sentence.</p>
+<p>In our case, DOCaml “sentences” are broken down like so:</p>
+<ul>
+<li>Programs
+<ul>
+<li>Statements
+<ul>
+<li>Expressions
+<ul>
+<li>Let of (Var, Expression) ← Let bindings</li>
+<li>Def of (Var, List of Var, Expression) ← Function definitions</li>
+<li>App of (Def, List of Value) ← Function applications</li>
+<li>Prim2 of (Expression, Expression) ← Binary operations</li>
+<li>Var of (Value)</li>
+<li>Number of (Value)</li>
+<li>String of (Value)</li>
+<li>Bool of (Value)
+<ul>
+<li>Values
+<ul>
+<li>String</li>
+<li>Number</li>
+<li>Boolean</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<p>Notice how expressions can be nested within other expressions? This kind of behavior makes the language more expressive and capable because there can be any number of subexpressions within a single expression.</p>
+<p>Now that we have a grammar (a messy, imperfect grammar), we can focus on tokenizing it.</p>
+<h3 id="lexing-aka-tokenizing">Lexing AKA tokenizing</h3>
+<p>Before transforming our plain text into a syntax tree, we have to divide it up into bite-sized pieces, or tokens that can be read by the parser. With plenty of regular expressions and conditionals, we can create a Google Apps Script program to turn our dirty code into a list of words that exist in DOCaml.</p>
+<h4 id="test-output">Test output</h4>
+<figure>
+<img src="../images/posts/docaml-lexer.png" alt="Lexer Example" />
+<figcaption aria-hidden="true">Lexer Example</figcaption>
+</figure>
+<h3 id="parsing">Parsing</h3>
+<p>To create an abstract syntax tree, the parser must iterate through the list of tokens, and construct statements based on token types.</p>
+<p>If the parser was given the token list shown above, it would:</p>
+<ol type="1">
+<li>Create a new Program</li>
+<li>Create a new Statement</li>
+<li>Read the Let token, and begin constructing a Let expression</li>
+<li>Ignore the equals symbol</li>
+<li>Read the Number token,</li>
+<li>Finish constructing the Let expression</li>
+<li>Return the complete tree → Program(Statement(Let(Var(x), Number(5))))</li>
+</ol>
+<p>Before moving onto the interpreter, it is important to address the possibility of “bad”, grammatically incorrect code. Without going into too much detail, assume that the parser will throw an error if it reads a token that breaks the rules defined by our grammar. Okay, now let’s move on.</p>
+<h4 id="test-output-1">Test output</h4>
+<figure>
+<img src="../images/posts/docaml-parser.png" alt="Parser Example" />
+<figcaption aria-hidden="true">Parser Example</figcaption>
+</figure>
+<h3 id="interpreting">Interpreting</h3>
+<p>Now that all of the necessary components have been implemented, the interpreter should be fairly easy to complete. During the execution of our program, we have to keep track of two things:</p>
+<ol type="1">
+<li>The result of the last statement to be executed</li>
+<li>The environment that expressions are executed in</li>
+</ol>
+<p>The result of the last statement is simply the result returned by the entire program. The environment holds crucial information like variable bindings and function definitions, without it, the interpreter would not be able to “remember” anything.</p>
+<p>If both requirements are fulfilled, the interpreter can just iterate through the syntax tree given by the parser and evaluate each statement in a program separately before returning the result of the final statement.</p>
+<p>Hooray! Our DOCaml interpreter is now complete and ready to be deployed to Google Docs!</p>
+<h4 id="test-output-2">Test output</h4>
+<figure>
+<img src="../images/posts/docaml-interp.png" alt="Interpreter Example" />
+<figcaption aria-hidden="true">Interpreter Example</figcaption>
+</figure>
+<h2 id="results">Results</h2>
+<p>The source code for this project can be found in <a href="https://github.com/dhan4043/docaml">this repository</a>.
+To keep things short, I am going to skip over the UI portion of this project, which is unimportant. Here are some neat little examples of DOCaml in action. Go make something fun!</p>
+<h2 id="let-bindings">Let Bindings</h2>
+<figure>
+<img src="../images/posts/docaml-let.png" alt="Let Binding Example" />
+<figcaption aria-hidden="true">Let Binding Example</figcaption>
+</figure>
+<h2 id="math">Math</h2>
+<figure>
+<img src="../images/posts/docaml-math.png" alt="Math Example" />
+<figcaption aria-hidden="true">Math Example</figcaption>
+</figure>
+<h2 id="function-definition-and-application">Function Definition and Application</h2>
+<figure>
+<img src="../images/posts/docaml-function.png" alt="Function Example" />
+<figcaption aria-hidden="true">Function Example</figcaption>
+</figure>
+<h2 id="type-checking-and-error-handling">Type Checking and Error Handling</h2>
+<figure>
+<img src="../images/posts/docaml-error.png" alt="Error Handling Example" />
+<figcaption aria-hidden="true">Error Handling Example</figcaption>
+</figure>
         
     </section>
 </article>
