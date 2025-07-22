@@ -177,6 +177,10 @@ article figcaption {
   @apply text-yellow-600 hover:underline;
 }
 
+.resume .certification a {
+  @apply text-inherit text-base decoration-dotted underline underline-offset-2 hover:decoration-solid;
+}
+
 .badges ul {
   @apply flex flex-wrap gap-2;
 }

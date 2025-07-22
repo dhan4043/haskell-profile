@@ -583,6 +583,19 @@ article figcaption {
     }
   }
 }
+.resume .certification a {
+  font-size: var(--text-base);
+  line-height: var(--tw-leading, var(--text-base--line-height));
+  color: inherit;
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+  &:hover {
+    @media (hover: hover) {
+      text-decoration-style: solid;
+    }
+  }
+}
 .badges ul {
   display: flex;
   flex-wrap: wrap;

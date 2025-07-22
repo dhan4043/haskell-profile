@@ -4,10 +4,10 @@ title: David Han
 ::: { .resume }
 ## Education
 ::: { .education }
-University of Maryland, College Park
-Bachelor of Science in Computer Science
-Minor in Sustainability Studies
-August 2021 - May 2025
+**University of Maryland, College Park**\
+*Bachelor of Science in Computer Science*\
+*Minor in Sustainability Studies*\
+August 2021 - May 2025\
 3.81 GPA
 :::
 ## Experience
@@ -19,14 +19,17 @@ $partial("templates/timeline.html")$
 - Microsoft Applied Skills, Microsoft Defender XDR
 - [FIRE: Researcher Credential][fire-cred]
 :::
-## Skills
-::: { .skills }
-- Python 
+## Languages
+::: { .language }
+- Python
 - Haskell 
 - C
+- JavaScript
 - Java (some proficiency)
 - R (some proficiency)
-- JavaScript 
+:::
+## Skills
+::: { .skill }
 - Web development principles
 - Data science principles
 - Cryptography
