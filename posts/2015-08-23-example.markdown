@@ -40,7 +40,7 @@ In order to make an interpreter, we first need a programming language to interpr
 
 Like spoken or written languages, programming languages have grammars or rules that describe their structure. For example, when analyzing the sentence, “the child ran the race,” you can use grammatical conventions to derive its meaning:
 
-![Parsed Sentence Example](/images/parsed-sentence.png)
+![Parsed Sentence Example](/images/posts/parsed-sentence.png)
 Assume Det = determiner, NP = noun phrase, VP = verb phrase, and S = sentence.
 
 In our case, DOCaml “sentences” are broken down like so:
@@ -71,7 +71,7 @@ Before transforming our plain text into a syntax tree, we have to divide it up i
 
 #### Test output
 
-![Lexer Example](/images/docaml-lexer.png)
+![Lexer Example](/images/posts/docaml-lexer.png)
 
 ### Parsing
 
@@ -91,7 +91,7 @@ Before moving onto the interpreter, it is important to address the possibility o
 
 #### Test output
 
-![Parser Example](/images/docaml-parser.png)
+![Parser Example](/images/posts/docaml-parser.png)
 
 ### Interpreting
 
@@ -108,7 +108,7 @@ Hooray! Our DOCaml interpreter is now complete and ready to be deployed to Googl
 
 #### Test output
 
-![Interpreter Example](/images/docaml-interp.png)
+![Interpreter Example](/images/posts/docaml-interp.png)
 
 ## Results
 
@@ -117,16 +117,16 @@ To keep things short, I am going to skip over the UI portion of this project, wh
 
 ## Let Bindings
 
-![Let Binding Example](/images/docaml-let.png)
+![Let Binding Example](/images/posts/docaml-let.png)
 
 ## Math
 
-![Math Example](/images/docaml-math.png)
+![Math Example](/images/posts/docaml-math.png)
 
 ## Function Definition and Application
 
-![Function Example](/images/docaml-function.png)
+![Function Example](/images/posts/docaml-function.png)
 
 ## Type Checking and Error Handling
 
-![Error Handling Example](/images/docaml-error.png)
+![Error Handling Example](/images/posts/docaml-error.png)
