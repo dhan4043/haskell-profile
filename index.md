@@ -4,10 +4,9 @@ title: David Han
 ::: { .resume }
 ## Education
 ::: { .education }
-**University of Maryland, College Park**\
-*Bachelor of Science in Computer Science*\
+**Bachelor of Science in Computer Science**\
 *Minor in Sustainability Studies*\
-August 2021 - May 2025\
+University of Maryland, 2021-2025\
 3.81 GPA
 :::
 ## Experience
