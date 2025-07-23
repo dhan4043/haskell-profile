@@ -1,6 +1,6 @@
 # haskell-profile
 
-My personal website built with Haskell, Hakyll, and TailwindCSS.
+My personal website built with Haskell, Hakyll, and TailwindCSS. Based on [this](https://ldgrp.me/) website.
 
 ## Deployment
 

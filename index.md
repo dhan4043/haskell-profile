@@ -45,6 +45,10 @@ Pursuing CompTIA Network+ certification.
 - Guitar
 - Sound design / music production
 :::
+## Projects
+::: { .posts }
+$partial("templates/project-list.html")$
+:::
 ## Posts
 ::: { .posts }
 $partial("templates/post-list.html")$

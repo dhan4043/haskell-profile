@@ -28,13 +28,19 @@ main = hakyllWith config $ do
         compile compressCssCompiler
 
 
-    match "posts/*" $ do
+    match "posts/*.md" $ do
         route $ setExtension "html"
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/post.html"    postCtx
             >>= loadAndApplyTemplate "templates/default.html" postCtx
             >>= relativizeUrls
 
+    match "projects/*.md" $ do
+        route $ setExtension "html"
+        compile $ pandocCompiler 
+                >>= loadAndApplyTemplate "templates/post.html"    projectCtx
+                >>= loadAndApplyTemplate "templates/default.html" projectCtx
+                >>= relativizeUrls
 
     match "404.html" $ do
         route   $ setExtension "html"
@@ -47,9 +53,11 @@ main = hakyllWith config $ do
         route idRoute
         compile $ do
             posts <- recentFirst =<< loadAll "posts/*"
+            projects <- recentFirst =<< loadAll "projects/*"
             let archiveCtx =
-                    listField "posts" postCtx (return posts) `mappend`
-                    constField "title" "Archives"            `mappend`
+                    listField "posts" postCtx (return posts)          `mappend`
+                    listField "projects" projectCtx (return projects) `mappend`
+                    constField "title" "Archives"                     `mappend`
                     defaultContext
 
             makeItem ""
@@ -57,14 +65,29 @@ main = hakyllWith config $ do
                 >>= loadAndApplyTemplate "templates/default.html" archiveCtx
                 >>= relativizeUrls
 
+    create ["projects.html"] $ do
+        route idRoute
+        compile $ do
+            projects <- recentFirst =<< loadAll "projects/*"
+            let projectsCtx =
+                    listField "projects" projectCtx (return projects) `mappend`
+                    constField "title" "Projects"                     `mappend`
+                    defaultContext
+
+            makeItem ""
+                >>= loadAndApplyTemplate "templates/projects.html" projectsCtx
+                >>= loadAndApplyTemplate "templates/default.html"  projectsCtx
+                >>= relativizeUrls
 
     match "index.md" $ do
         route $ setExtension "html"
         compile $ do
             posts <- recentFirst =<< loadAll "posts/*"
+            projects <- recentFirst =<< loadAll "projects/*"
             let indexCtx =
-                    listField "posts" postCtx (return posts) `mappend`
-                    constField "title" "Home"                `mappend`
+                    listField "posts" postCtx (return posts)          `mappend`
+                    listField "projects" projectCtx (return projects) `mappend`
+                    constField "title" "David Han"                    `mappend`
                     defaultContext
 
             pandocCompiler
@@ -75,10 +98,15 @@ main = hakyllWith config $ do
 
     match "templates/*" $ compile templateCompiler
 
-
 --------------------------------------------------------------------------------
-postCtx :: Context String
-postCtx =
-    dateField "date" "%B %e, %Y" `mappend`
+entryCtx :: String -> Context String
+entryCtx entryType =
+    constField "entry-type" entryType `mappend`
+    dateField "date" "%d %b %Y"       `mappend`
     defaultContext
 
+postCtx :: Context String
+postCtx = entryCtx "post"
+
+projectCtx :: Context String
+projectCtx = entryCtx "project"
