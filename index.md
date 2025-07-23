@@ -14,30 +14,10 @@ August 2021 - May 2025\
 ::: { .timeline }
 $partial("templates/timeline.html")$
 :::
-## Certifications
+## Credentials
 ::: { .certification }
 - Microsoft Applied Skills, Microsoft Defender XDR
 - [FIRE: Researcher Credential][fire-cred]
-:::
-## Languages
-::: { .language }
-- Python
-- Haskell 
-- C
-- JavaScript
-- Java (some proficiency)
-- R (some proficiency)
-:::
-## Skills
-::: { .skill }
-- Web development principles
-- Data science principles
-- Cryptography
-- Data / user privacy
-- Computer networking
-- Web vulnerabilities
-- Microsoft Azure
-- Microsoft 365
 :::
 ## Currently
 ::: { .currently }
@@ -49,7 +29,6 @@ Pursuing CompTIA A+ certification.
 - [GitHub][github]
 - [Portfolium][portfolium]
 :::
-
 ## Interests
 ::: { .interests }
 - Full-stack development
@@ -64,7 +43,6 @@ Pursuing CompTIA A+ certification.
 - Guitar
 - Sound design
 :::
-
 ## Posts
 ::: { .posts }
 $partial("templates/post-list.html")$

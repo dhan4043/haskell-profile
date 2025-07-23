@@ -2,20 +2,13 @@
 title: Creating an Interpreter for Google Docs
 ---
 
-> “Are you ready to become real editors?”
-> Vim gulps.
-> Emacs breathes heavily.
-> Sublime nods nervously.
-> VSCode sighs.
-> “Yes, Google Docs,” they say in unison.
-
 ## Building Blocks
 
 ### Google Apps Script
 
 This project was built entirely on Google Apps Script, a free code platform provided by Google. Google Apps Script and the Apps Script language (a subset of JavaScript) were created to provide inexperienced developers with _just_ enough tools to create quick automations for Google Workspace products like Google Sheets.
 
-While most Apps Script programmers make useful, practical things, I did the complete opposite and created a code interpreter for Google Docs. Because why use a _real_ text editor like Neovim when you can add the same functionality to Google Docs? Who doesn’t want to double space their code?
+While most Apps Script programmers make useful, practical things, I did the complete opposite and created a code interpreter for Google Docs. Because why use a "real" text editor like Neovim when you can add the same functionality to Google Docs? Who doesn’t want to double space their code?
 
 ### DOCaml
 
@@ -25,9 +18,7 @@ In order to make an interpreter, we first need a programming language to interpr
 
 - Primitive types: String, Number, Bool
 - Binary mathematical operations (\*, \/, +. -)
-- Let expressions
-    - Variable bindings
-    - Function definitions
+- Let expressions (variable bindings, function definitions)
 - Function applications
 - Line comments (Python/Ruby/R style)
 
@@ -35,18 +26,17 @@ In order to make an interpreter, we first need a programming language to interpr
 
 Like spoken or written languages, programming languages have grammars or rules that describe their structure. For example, when analyzing the sentence, “the child ran the race,” you can use grammatical conventions to derive its meaning:
 
-![Parsed Sentence Example](/images/parsed-sentence.png)
-Assume Det = determiner, NP = noun phrase, VP = verb phrase, and S = sentence.
+![Det = Determiner, NP = Noun Phrase, VP = Verb Phrase, S = Sentence](/images/parsed-sentence.png)
 
 In our case, DOCaml “sentences” are broken down like so:
 
 - Programs
     - Statements
         - Expressions
-            - Let of (Var, Expression) ← Let bindings
-            - Def of (Var, List of Var, Expression) ← Function definitions
-            - App of (Def, List of Value) ← Function applications
-            - Prim2 of (Expression, Expression) ← Binary operations
+            - Let of (Var, Expression) ← Let Bindings
+            - Def of (Var, List of Var, Expression) ← Function Definitions
+            - App of (Def, List of Value) ← Function Applications
+            - Prim2 of (Expression, Expression) ← Binary Operations
             - Var of (Value)
             - Number of (Value)
             - String of (Value)
@@ -64,9 +54,7 @@ Now that we have a grammar (a messy, imperfect grammar), we can focus on tokeniz
 
 Before transforming our plain text into a syntax tree, we have to divide it up into bite-sized pieces, or tokens that can be read by the parser. With plenty of regular expressions and conditionals, we can create a Google Apps Script program to turn our dirty code into a list of words that exist in DOCaml.
 
-#### Test output
-
-![Lexer Example](/images/docaml-lexer.png)
+![Lexer Test Output](/images/docaml-lexer.png)
 
 ### Parsing
 
@@ -84,9 +72,7 @@ If the parser was given the token list shown above, it would:
 
 Before moving onto the interpreter, it is important to address the possibility of “bad”, grammatically incorrect code. Without going into too much detail, assume that the parser will throw an error if it reads a token that breaks the rules defined by our grammar. Okay, now let’s move on.
 
-#### Test output
-
-![Parser Example](/images/docaml-parser.png)
+![Parser Test Output](/images/docaml-parser.png)
 
 ### Interpreting
 
@@ -101,27 +87,17 @@ If both requirements are fulfilled, the interpreter can just iterate through the
 
 Hooray! Our DOCaml interpreter is now complete and ready to be deployed to Google Docs!
 
-#### Test output
-
-![Interpreter Example](/images/docaml-interp.png)
+![Interpreter Test Output](/images/docaml-interp.png)
 
 ## Results
 
 The source code for this project can be found in [this repository](https://github.com/dhan4043/docaml).
 To keep things short, I am going to skip over the UI portion of this project, which is unimportant. Here are some neat little examples of DOCaml in action. Go make something fun!
 
-## Let Bindings
+![Let Bindings](/images/docaml-let.png)
 
-![Let Binding Example](/images/docaml-let.png)
+![Basic Math](/images/docaml-math.png)
 
-## Math
+![Function Definition and Application](/images/docaml-function.png)
 
-![Math Example](/images/docaml-math.png)
-
-## Function Definition and Application
-
-![Function Example](/images/docaml-function.png)
-
-## Type Checking and Error Handling
-
-![Error Handling Example](/images/docaml-error.png)
+![Type Checking and Error Handling](/images/docaml-error.png)
