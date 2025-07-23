@@ -30,21 +30,7 @@ Like spoken or written languages, programming languages have grammars or rules t
 
 In our case, DOCaml “sentences” are broken down like so:
 
-- Programs
-    - Statements
-        - Expressions
-            - Let of (Var, Expression) ← Let Bindings
-            - Def of (Var, List of Var, Expression) ← Function Definitions
-            - App of (Def, List of Value) ← Function Applications
-            - Prim2 of (Expression, Expression) ← Binary Operations
-            - Var of (Value)
-            - Number of (Value)
-            - String of (Value)
-            - Bool of (Value)
-                - Values
-                    - String
-                    - Number
-                    - Boolean
+![DOCaml's Grammar](/images/docaml-grammar.png)
 
 Notice how expressions can be nested within other expressions? This kind of behavior makes the language more expressive and capable because there can be any number of subexpressions within a single expression.
 

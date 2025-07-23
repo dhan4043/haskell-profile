@@ -47,33 +47,10 @@
 <figcaption aria-hidden="true">Det = Determiner, NP = Noun Phrase, VP = Verb Phrase, S = Sentence</figcaption>
 </figure>
 <p>In our case, DOCaml “sentences” are broken down like so:</p>
-<ul>
-<li>Programs
-<ul>
-<li>Statements
-<ul>
-<li>Expressions
-<ul>
-<li>Let of (Var, Expression) ← Let Bindings</li>
-<li>Def of (Var, List of Var, Expression) ← Function Definitions</li>
-<li>App of (Def, List of Value) ← Function Applications</li>
-<li>Prim2 of (Expression, Expression) ← Binary Operations</li>
-<li>Var of (Value)</li>
-<li>Number of (Value)</li>
-<li>String of (Value)</li>
-<li>Bool of (Value)
-<ul>
-<li>Values
-<ul>
-<li>String</li>
-<li>Number</li>
-<li>Boolean</li>
-</ul></li>
-</ul></li>
-</ul></li>
-</ul></li>
-</ul></li>
-</ul>
+<figure>
+<img src="../images/docaml-grammar.png" alt="DOCaml’s Grammar" />
+<figcaption aria-hidden="true">DOCaml’s Grammar</figcaption>
+</figure>
 <p>Notice how expressions can be nested within other expressions? This kind of behavior makes the language more expressive and capable because there can be any number of subexpressions within a single expression.</p>
 <p>Now that we have a grammar (a messy, imperfect grammar), we can focus on tokenizing it.</p>
 <h3 id="lexing-aka-tokenizing">Lexing AKA tokenizing</h3>
