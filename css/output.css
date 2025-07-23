@@ -583,7 +583,7 @@ article figcaption {
     }
   }
 }
-.resume .certification a {
+.resume .certification a, .resume .timeline a {
   font-size: var(--text-base);
   line-height: var(--tw-leading, var(--text-base--line-height));
   color: inherit;
