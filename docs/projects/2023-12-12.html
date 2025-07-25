@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Creating a ROT13 Guessing Game in OCaml</title>
+        <link rel="stylesheet" type="text/css" href="../css/output.css" />
+        <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png" />
+    <link rel="manifest" href="../images/site.webmanifest" />
+    </head>
+    <body>
+        <header>
+  <div id="logo">
+    <a href="../">David Han</a>
+  </div>
+</header>
+
+        <main><article>
+    <section class="header">
+        <div class="text-sm font-mono text-slate-600">
+            11 Dec 2023
+        </div>
+        <h1 class="my-1">Creating a ROT13 Guessing Game in OCaml</h1>
+    </section>
+    <hr>
+    <section>
+        <h2 id="what-is-rot13">What is ROT13?</h2>
+<p>There are many different ways to encrypt data in cryptography, but not all of them are equal in terms of complexity and hardness. One of the simplest encryption techniques is the <strong>Caesar cipher</strong>, named after Julius Caesar who used the method to conceal his private messages.<sup>1</sup> This rather primitive form of encryption is a type of <strong>substitution cipher</strong>, which obscures text through alphabetical shifts.</p>
+<p>Take this plain quote for example:</p>
+<blockquote>
+<p>Eternity is a mere moment, just long enough for a joke.</p>
+</blockquote>
+<p>If we replace each letter with the letter that appears three steps ahead of it in the English alphabet, we get something like this:</p>
+<blockquote>
+<p>Hwhuqlwb lv d phuh prphqw, mxvw orqj hqrxjk iru d mrnh.</p>
+</blockquote>
+<p>Every “A” becomes a “D”
+Every “E” becomes an “H”
+And so on…</p>
+<p>ROT13 is another version of the Caesar cipher that uses shifts, or ROTations, of 13.</p>
+<p>Now it should be apparent that this encryption is incredibly easy to undo if you have the slightest hunch that it was used. Applying the same shift to a series of messages is like using one key for every unit in an apartment building. If an adversary can successfully decrypt even one message, then the entire conversation is compromised.</p>
+<h3 id="so-why-should-we-care-about-rot13">So why should we care about ROT13?</h3>
+<p>While it is impractical to use ROT13 today, it is a relatively easy way to practice analyzing ciphertexts and looking for patterns within them. Encryption algorithms may seem magical and unbreakable, but the truth is, a decent portion of them rely on cute assumptions and plenty of faith.</p>
+<h2 id="gamifying-rot13">Gamifying ROT13</h2>
+<p>As a fun-<em>ish</em> programming exercise, I wrote a basic OCaml program that:</p>
+<ol type="1">
+<li>Generates a quote</li>
+<li>Encrypts it with ROT13</li>
+<li>Asks the user to guess the original quote until they are correct or give up</li>
+</ol>
+<h3 id="generating-quotes">Generating Quotes</h3>
+<p>To generate quotes, we can use the Lwt module to make an HTTP request to the quotable API like so:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> fetch_quote () =</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> uri = Uri.of_string <span class="st">&quot;https://api.quotable.io/random&quot;</span> <span class="kw">in</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  Client.get uri &gt;&gt;= <span class="kw">fun</span> (_, body) -&gt;</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  Cohttp_lwt.Body.to_string body</span></code></pre></div>
+<p>And to retrieve the quote + author information as text, we can use the Yojson module to parse the JSON response:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> fetch_quote () =</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> uri = Uri.of_string <span class="st">&quot;https://api.quotable.io/random&quot;</span> <span class="kw">in</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  Client.get uri &gt;&gt;= <span class="kw">fun</span> (_, body) -&gt;</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  Cohttp_lwt.Body.to_string body</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>fetch_quote () &gt;&gt;= <span class="kw">fun</span> quote_json -&gt;</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>	<span class="kw">let</span> quote = Yojson.Basic.from_string quote_json <span class="kw">in</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> content = Yojson.Basic.Util.(quote |&gt; member <span class="st">&quot;content&quot;</span> |&gt; to_string) <span class="kw">in</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> author = Yojson.Basic.Util.(quote |&gt; member <span class="st">&quot;author&quot;</span> |&gt; to_string) <span class="kw">in</span></span></code></pre></div>
+<h3 id="encrypting-quotes">Encrypting Quotes</h3>
+<p>Now that we have our hands on a good quote, we can start working on the encryption part of the program.
+Instead of using a crypto library to generate ciphers, I decided to write the ROT13 function myself, since it has already been established that the algorithm is <em>very</em> simple.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> rot13_char c =</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> base = <span class="kw">if</span> <span class="dt">Char</span>.code c &gt;= <span class="dt">Char</span>.code <span class="ch">'a'</span> <span class="kw">then</span> <span class="dt">Char</span>.code <span class="ch">'a'</span> <span class="kw">else</span> <span class="dt">Char</span>.code <span class="ch">'A'</span> <span class="kw">in</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">if</span> <span class="dt">Char</span>.code c &gt;= base &amp;&amp; <span class="dt">Char</span>.code c &lt;= base + <span class="dv">25</span> <span class="kw">then</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Char</span>.chr ((<span class="dt">Char</span>.code c - base + <span class="dv">13</span>) <span class="kw">mod</span> <span class="dv">26</span> + base)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">else</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    c</span></code></pre></div>
+<p>The function above applies ROT13 to a single character, and can easily be applied to a list of characters aka a string.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> rot13 str =</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">String</span>.map rot13_char str</span></code></pre></div>
+<h3 id="guessing-and-verification">Guessing and Verification</h3>
+<p>To check if a user’s guess is correct, we can put a conditional in our main function to handle each attempt.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> <span class="kw">rec</span> guess_loop () =</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>      <span class="kw">let</span> guess = <span class="dt">read_line</span> () <span class="kw">in</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>      <span class="kw">if</span> <span class="dt">String</span>.lowercase_ascii guess = <span class="st">&quot;give up&quot;</span> <span class="kw">then</span> <span class="kw">begin</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Printf</span>.printf <span class="st">&quot;%sThe original quote is:%s %s</span><span class="ch">\n</span><span class="st">&quot;</span> bold reset content;</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        Lwt.return ()</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>      <span class="kw">end</span> <span class="kw">else</span> <span class="kw">if</span> guess = content <span class="kw">then</span> <span class="kw">begin</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Printf</span>.printf <span class="st">&quot;%sCongratulations! Your guess is correct!%s</span><span class="ch">\n</span><span class="st">&quot;</span> green reset;</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        Lwt.return ()</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>      <span class="kw">end</span> <span class="kw">else</span> <span class="kw">if</span> check_partial_guess content guess <span class="kw">then</span> <span class="kw">begin</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Printf</span>.printf <span class="st">&quot;%sPartially Correct! Keep Going.%s</span><span class="ch">\n</span><span class="st">&quot;</span> yellow reset;</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> regex = Str.regexp (rot13 guess) <span class="kw">in</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> partial_quote = Str.replace_first regex guess encrypted_quote <span class="kw">in</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Printf</span>.printf <span class="st">&quot;%sPartially Decrypted Quote:%s %s</span><span class="ch">\n\n</span><span class="st">&quot;</span> bold reset (red ^ partial_quote ^ reset);</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        guess_loop ()</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>      <span class="kw">end</span> <span class="kw">else</span> <span class="kw">begin</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Printf</span>.printf <span class="st">&quot;%sIncorrect. Try again or type 'give up' to reveal the answer.%s</span><span class="ch">\n</span><span class="st">&quot;</span> red reset;</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        guess_loop ()</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>      <span class="kw">end</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">in</span></span></code></pre></div>
+<p>In the case that the user is only partially correct, we can replace the words that have been guessed (or calculated) correctly with their plaintext counterparts, and also leave all the other words alone.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> check_partial_guess original guess =</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> <span class="kw">rec</span> check_words orig_words guess_words partially_correct =</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">match</span> orig_words, guess_words <span class="kw">with</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    | [], [] -&gt; partially_correct</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    | _, [] -&gt; partially_correct</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    | o :: og, g :: gs -&gt;</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> o = g <span class="kw">then</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>          check_words og gs (partially_correct || <span class="kw">true</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">else</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>          check_words og gs partially_correct</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    | _, _ -&gt; <span class="kw">false</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="kw">in</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> orig_words = <span class="dt">String</span>.split_on_char <span class="ch">' '</span> original <span class="kw">in</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> guess_words = <span class="dt">String</span>.split_on_char <span class="ch">' '</span> guess <span class="kw">in</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  check_words orig_words guess_words <span class="kw">false</span></span></code></pre></div>
+<h3 id="putting-it-all-together">Putting it all Together</h3>
+<p>Using all of the components above, we can finish making the game with just a pinch of boilerplate. The full main loop should look like this:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> main () =</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  Lwt_main.run (</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    fetch_quote () &gt;&gt;= <span class="kw">fun</span> quote_json -&gt;</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> quote = Yojson.Basic.from_string quote_json <span class="kw">in</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> content = Yojson.Basic.Util.(quote |&gt; member <span class="st">&quot;content&quot;</span> |&gt; to_string) <span class="kw">in</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> author = Yojson.Basic.Util.(quote |&gt; member <span class="st">&quot;author&quot;</span> |&gt; to_string) <span class="kw">in</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> encrypted_quote = rot13 content <span class="kw">in</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Printf</span>.printf <span class="st">&quot;%sAuthor:%s %s</span><span class="ch">\n</span><span class="st">&quot;</span> bold reset author;</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Printf</span>.printf <span class="st">&quot;%sEncrypted Quote:%s %s</span><span class="ch">\n\n</span><span class="st">&quot;</span> bold reset (red ^ encrypted_quote ^ reset);</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">print_endline</span> <span class="st">&quot;Can you guess the original quote? (Type your guess or 'give up' to reveal the answer)&quot;</span>;</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> <span class="kw">rec</span> guess_loop () =</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>      <span class="kw">let</span> guess = <span class="dt">read_line</span> () <span class="kw">in</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>      <span class="kw">if</span> <span class="dt">String</span>.lowercase_ascii guess = <span class="st">&quot;give up&quot;</span> <span class="kw">then</span> <span class="kw">begin</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Printf</span>.printf <span class="st">&quot;%sThe original quote is:%s %s</span><span class="ch">\n</span><span class="st">&quot;</span> bold reset content;</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        Lwt.return ()</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>      <span class="kw">end</span> <span class="kw">else</span> <span class="kw">if</span> guess = content <span class="kw">then</span> <span class="kw">begin</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Printf</span>.printf <span class="st">&quot;%sCongratulations! Your guess is correct!%s</span><span class="ch">\n</span><span class="st">&quot;</span> green reset;</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>        Lwt.return ()</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>      <span class="kw">end</span> <span class="kw">else</span> <span class="kw">if</span> check_partial_guess content guess <span class="kw">then</span> <span class="kw">begin</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Printf</span>.printf <span class="st">&quot;%sPartially Correct! Keep Going.%s</span><span class="ch">\n</span><span class="st">&quot;</span> yellow reset;</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> regex = Str.regexp (rot13 guess) <span class="kw">in</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> partial_quote = Str.replace_first regex guess encrypted_quote <span class="kw">in</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Printf</span>.printf <span class="st">&quot;%sPartially Decrypted Quote:%s %s</span><span class="ch">\n\n</span><span class="st">&quot;</span> bold reset (red ^ partial_quote ^ reset);</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>        guess_loop ()</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>      <span class="kw">end</span> <span class="kw">else</span> <span class="kw">begin</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Printf</span>.printf <span class="st">&quot;%sIncorrect. Try again or type 'give up' to reveal the answer.%s</span><span class="ch">\n</span><span class="st">&quot;</span> red reset;</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>        guess_loop ()</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>      <span class="kw">end</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>    <span class="kw">in</span></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>    guess_loop ()</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> () = main ()</span></code></pre></div>
+<h3 id="the-final-result">The Final Result</h3>
+<p>Upon running the program, the user will be presented with a new encrypted quote that they can crack. Pretty neat! The source code for this mini project can be found <a href>here</a>.</p>
+<h4 id="example-1">Example 1</h4>
+<figure>
+<img src="../images/ocaml-guesser-1.png" alt="Example One" />
+<figcaption aria-hidden="true">Example One</figcaption>
+</figure>
+<h4 id="example-2">Example 2</h4>
+<figure>
+<img src="../images/ocaml-guesser-2.png" alt="Example Two" />
+<figcaption aria-hidden="true">Example Two</figcaption>
+</figure>
+<h2 id="references">References</h2>
+<ol type="1">
+<li>Suetonius. (n.d.). <em>SVETONI TRANQVILII VITA DIVI IVLI</em>. Divus Iulius. http://thelatinlibrary.com/suetonius/suet.caesar.html#56</li>
+<li>Antoniyak . (2022, December 26). <em>OCaml 5 offers Shared memory support</em>. Devstyler.io. https://devstyler.io/blog/2022/12/26/ocaml-5-offers-shared-memory-support/</li>
+</ol>
+        
+        Last modified 2025-7-23
+        
+    </section>
+</article>
+</main>
+        <footer class="flex flex-col mt-12 mb-8 space-y-4">
+    <div class="flex justify-center">
+        <a aria-label="Link to Email" class="footer-icon" href="mailto:dhan4043@gmail.com">
+            <i class="icon-mail"></i>
+        </a>
+        <a aria-label="Link to GitHub" class="footer-icon" href="https://github.com/dhan4043">
+            <i class="icon-github"></i>
+        </a>
+    </div>
+    <div class="text-center">
+        Site generated by
+        <a href="http://jaspervdj.be/hakyll">Hakyll</a>.
+        Source on 
+        <a href="https://github.com/dhan4043/haskell-profile">GitHub</a>.
+    </div>
+</footer>
+
+    </body>
+</html>
