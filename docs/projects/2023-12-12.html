@@ -30,11 +30,11 @@
 <p>There are many different ways to encrypt data in cryptography, but not all of them are equal in terms of complexity and hardness. One of the simplest encryption techniques is the <strong>Caesar cipher</strong>, named after Julius Caesar who used the method to conceal his private messages.<sup>1</sup> This rather primitive form of encryption is a type of <strong>substitution cipher</strong>, which obscures text through alphabetical shifts.</p>
 <p>Take this plain quote for example:</p>
 <blockquote>
-<p>Eternity is a mere moment, just long enough for a joke.</p>
+<p><em>“Eternity is a mere moment, just long enough for a joke.”</em></p>
 </blockquote>
 <p>If we replace each letter with the letter that appears three steps ahead of it in the English alphabet, we get something like this:</p>
 <blockquote>
-<p>Hwhuqlwb lv d phuh prphqw, mxvw orqj hqrxjk iru d mrnh.</p>
+<p><em>“Hwhuqlwb lv d phuh prphqw, mxvw orqj hqrxjk iru d mrnh.”</em></p>
 </blockquote>
 <p>Every “A” becomes a “D”
 Every “E” becomes an “H”
@@ -153,13 +153,11 @@ Instead of using a crypto library to generate ciphers, I decided to write the RO
 <span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> () = main ()</span></code></pre></div>
 <h3 id="the-final-result">The Final Result</h3>
-<p>Upon running the program, the user will be presented with a new encrypted quote that they can crack. Pretty neat! The source code for this mini project can be found <a href>here</a>.</p>
-<h4 id="example-1">Example 1</h4>
+<p>Upon running the program, the user will be presented with a new encrypted quote that they can crack. Pretty neat! The source code for this mini project can be found <a href="https://github.com/dhan4043/rot13-guesser">here</a>.</p>
 <figure>
 <img src="../images/ocaml-guesser-1.png" alt="Example One" />
 <figcaption aria-hidden="true">Example One</figcaption>
 </figure>
-<h4 id="example-2">Example 2</h4>
 <figure>
 <img src="../images/ocaml-guesser-2.png" alt="Example Two" />
 <figcaption aria-hidden="true">Example Two</figcaption>
