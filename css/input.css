@@ -137,7 +137,7 @@ article figcaption {
 }
 
 .entry-list img, .entry-list .img-placeholder {
-  @apply h-[150px] w-full object-cover rounded-lg my-3 filter grayscale brightness-75;
+  @apply h-[150px] w-full object-cover rounded-lg my-3 filter grayscale brightness-85;
 }
 
 .entry-list .img-placeholder {
