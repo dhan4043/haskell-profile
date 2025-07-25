@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Exploiting a Security Vulnerability in a Java Program</title>
+        <link rel="stylesheet" type="text/css" href="../css/output.css" />
+        <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png" />
+    <link rel="manifest" href="../images/site.webmanifest" />
+    </head>
+    <body>
+        <header>
+  <div id="logo">
+    <a href="../">David Han</a>
+  </div>
+</header>
+
+        <main><article>
+    <section class="header">
+        <div class="text-sm font-mono text-slate-600">
+            10 Dec 2024
+        </div>
+        <h1 class="my-1">Exploiting a Security Vulnerability in a Java Program</h1>
+    </section>
+    <hr>
+    <section>
+        <h2 id="overview">Overview</h2>
+<p>As the final project for a software/network security class I took during my sophomore year, I was given the task of finding security vulnerabilities in a gradebook program developed by my peers. It may be hard to follow this post (most of the source code had to be omitted), but the key lessons here are:</p>
+<ol type="1">
+<li>Always specify your parameters when encrypting data, do not use defaults!</li>
+<li>Use some kind of authenticated encryption scheme when you want to detect tampering.</li>
+</ol>
+<p><strong>Disclaimer: This vulnerability was found in a “toy” Java program, and is simply an example of poor programming practices. Do not try to exploit a program without explicit permission from the developer(s).</strong></p>
+<h2 id="gradebook-implementation">Gradebook Implementation</h2>
+<h3 id="gradebook-encryption-and-decryption">Gradebook Encryption and Decryption</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="dt">byte</span><span class="op">[]</span> <span class="fu">encryptData</span><span class="op">(</span><span class="bu">String</span> data<span class="op">,</span> <span class="bu">String</span> keyString<span class="op">)</span> <span class="kw">throws</span> <span class="bu">IOException</span> <span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> <span class="op">{</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>      <span class="dt">byte</span><span class="op">[]</span> keyBytes <span class="op">=</span> Base64<span class="op">.</span><span class="fu">getDecoder</span><span class="op">().</span><span class="fu">decode</span><span class="op">(</span>keyString<span class="op">);</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>      <span class="bu">SecretKeySpec</span> secretKey <span class="op">=</span> <span class="kw">new</span> <span class="bu">SecretKeySpec</span><span class="op">(</span>keyBytes<span class="op">,</span> <span class="st">&quot;AES&quot;</span><span class="op">);</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>      <span class="bu">Cipher</span> cipher <span class="op">=</span> <span class="bu">Cipher</span><span class="op">.</span><span class="fu">getInstance</span><span class="op">(</span><span class="st">&quot;AES&quot;</span><span class="op">);</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>      cipher<span class="op">.</span><span class="fu">init</span><span class="op">(</span><span class="bu">Cipher</span><span class="op">.</span><span class="fu">ENCRYPT_MODE</span><span class="op">,</span> secretKey<span class="op">);</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> cipher<span class="op">.</span><span class="fu">doFinal</span><span class="op">(</span>data<span class="op">.</span><span class="fu">getBytes</span><span class="op">(</span>StandardCharsets<span class="op">.</span><span class="fu">UTF_8</span><span class="op">));</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">catch</span> <span class="op">(</span><span class="bu">Exception</span> e<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>      <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">IOException</span><span class="op">(</span><span class="st">&quot;Error while encrypting data&quot;</span><span class="op">,</span> e<span class="op">);</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">private</span> <span class="bu">String</span> <span class="fu">decryptData</span><span class="op">(</span><span class="dt">byte</span><span class="op">[]</span> encryptedData<span class="op">,</span> <span class="bu">String</span> keyString<span class="op">)</span> <span class="kw">throws</span> <span class="bu">IOException</span> <span class="op">{</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> <span class="op">{</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>      <span class="dt">byte</span><span class="op">[]</span> keyBytes <span class="op">=</span> Base64<span class="op">.</span><span class="fu">getDecoder</span><span class="op">().</span><span class="fu">decode</span><span class="op">(</span>keyString<span class="op">);</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>      <span class="bu">SecretKeySpec</span> secretKey <span class="op">=</span> <span class="kw">new</span> <span class="bu">SecretKeySpec</span><span class="op">(</span>keyBytes<span class="op">,</span> <span class="st">&quot;AES&quot;</span><span class="op">);</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>      <span class="bu">Cipher</span> cipher <span class="op">=</span> <span class="bu">Cipher</span><span class="op">.</span><span class="fu">getInstance</span><span class="op">(</span><span class="st">&quot;AES&quot;</span><span class="op">);</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>      cipher<span class="op">.</span><span class="fu">init</span><span class="op">(</span><span class="bu">Cipher</span><span class="op">.</span><span class="fu">DECRYPT_MODE</span><span class="op">,</span> secretKey<span class="op">);</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>      <span class="dt">byte</span><span class="op">[]</span> decryptedBytes <span class="op">=</span> cipher<span class="op">.</span><span class="fu">doFinal</span><span class="op">(</span>encryptedData<span class="op">);</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>      <span class="bu">String</span> decryptedData <span class="op">=</span> <span class="kw">new</span> <span class="bu">String</span><span class="op">(</span>decryptedBytes<span class="op">,</span> StandardCharsets<span class="op">.</span><span class="fu">UTF_8</span><span class="op">);</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> decryptedData<span class="op">;</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">catch</span> <span class="op">(</span><span class="bu">Exception</span> e<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>      <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">IOException</span><span class="op">(</span><span class="st">&quot;Error while decrypting data&quot;</span><span class="op">,</span> e<span class="op">);</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span></code></pre></div>
+<h3 id="gradebook-key-generation-and-storage">Gradebook Key Generation and Storage</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// KEY GENERATION</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> <span class="op">{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">KeyGenerator</span> keyGen <span class="op">=</span> <span class="bu">KeyGenerator</span><span class="op">.</span><span class="fu">getInstance</span><span class="op">(</span><span class="st">&quot;AES&quot;</span><span class="op">);</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    keyGen<span class="op">.</span><span class="fu">init</span><span class="op">(</span><span class="dv">256</span><span class="op">);</span> <span class="co">// using 256 bits</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">SecretKey</span> secretKey <span class="op">=</span> keyGen<span class="op">.</span><span class="fu">generateKey</span><span class="op">();</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">byte</span><span class="op">[]</span> keyHash <span class="op">=</span> <span class="fu">hashKey</span><span class="op">(</span>secretKey<span class="op">);</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>keyHash <span class="op">==</span> <span class="kw">null</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>	    <span class="bu">System</span><span class="op">.</span><span class="fu">err</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Failed to hash the key&quot;</span><span class="op">);</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>	    <span class="bu">System</span><span class="op">.</span><span class="fu">exit</span><span class="op">(</span><span class="dv">255</span><span class="op">);</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Write the hash to the file</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> <span class="op">{</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>	    <span class="bu">String</span> keyHashString <span class="op">=</span> Base64<span class="op">.</span><span class="fu">getEncoder</span><span class="op">().</span><span class="fu">encodeToString</span><span class="op">(</span>keyHash<span class="op">);</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Base64 Encoded Hashed Key: &quot;</span> <span class="op">+</span> keyHashString<span class="op">);</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        Files<span class="op">.</span><span class="fu">write</span><span class="op">(</span>Paths<span class="op">.</span><span class="fu">get</span><span class="op">(</span>filename<span class="op">),</span> <span class="op">(</span>keyHashString <span class="op">+</span> <span class="bu">System</span><span class="op">.</span><span class="fu">lineSeparator</span><span class="op">()).</span><span class="fu">getBytes</span><span class="op">());</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">catch</span> <span class="op">(</span><span class="bu">IOException</span> e<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">err</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Error writing key hash to file!&quot;</span><span class="op">);</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>	    e<span class="op">.</span><span class="fu">printStackTrace</span><span class="op">();</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>	    <span class="bu">System</span><span class="op">.</span><span class="fu">exit</span><span class="op">(</span><span class="dv">255</span><span class="op">);</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Convert key to String for display</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="bu">String</span> encodedKey <span class="op">=</span> Base64<span class="op">.</span><span class="fu">getEncoder</span><span class="op">().</span><span class="fu">encodeToString</span><span class="op">(</span>secretKey<span class="op">.</span><span class="fu">getEncoded</span><span class="op">());</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Key is &quot;</span> <span class="op">+</span> encodedKey<span class="op">);</span> <span class="co">// Print encoded key</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">catch</span> <span class="op">(</span><span class="bu">NoSuchAlgorithmException</span> e<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>      <span class="bu">System</span><span class="op">.</span><span class="fu">err</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Error generating keys!&quot;</span><span class="op">);</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>      e<span class="op">.</span><span class="fu">printStackTrace</span><span class="op">();</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>      <span class="bu">System</span><span class="op">.</span><span class="fu">exit</span><span class="op">(</span><span class="dv">255</span><span class="op">);</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h2 id="the-vulnerability">The Vulnerability</h2>
+<p>The manner in which hashed key values are handled by the gradebook program is extremely problematic. The hash value is placed at the very beginning of the ciphertext, which means an attacker can easily identify the hash value’s location by examining the ciphertext, enabling them to modify the ciphertext without altering the hash value. Additionally, there’s no integrity check using the hash value in the encryptData or decryptData functions, so this program fails to detect ciphertext tampering.</p>
+<h3 id="encrypted-gradebook-file">Encrypted Gradebook File</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>YBmzZqZNUyoiLdIOrjIFV6Cy4vyhLV6x2l8wFtkBozo=</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>l65415fAysfy12+49AtY/cHvdNcjLXERZRr9IUWEnK+ZvlO5H/X1nOh4y5eNDW/Iv+ycb15RbzLkd+DF/g1f5ZKeJNO48yRwVn7kDk3JT6+8vCy1qcTFXfPs9USH/ISUcUlCGRqoRuyRpEIl3qxg2Wo/K0fhkqIb44eTsSTdpvm5vgLyI7HW044dcihU00/av7atB1w6dYKCG7ai4+x/AWB0chxde1Z/hq/Db2GL9rL8aHomCLS5DlzVb+int0gbUE7/FMPS3DbRgqnbHetbzIbh/xKLb/vRj+6r0jt/BQGelZH+dpACZTXIe8Nk5TS9mFNfIBG1tHEpl6aTtI6jPx+eMKforCXXNmjJgcGD6+V6oTFs59UWW2DS1RW+xmTw</span></code></pre></div>
+<p>We can deduce that the first line of the encrypted gradebook is the hashed value of the key.</p>
+<h2 id="the-exploit">The Exploit</h2>
+<p>Because we can modify the gradebook without being detected, let’s write some shell scripts to automate an attack.</p>
+<h3 id="creating-a-new-gradebook">Creating a new Gradebook</h3>
+<p>This script will set up the environment for our attack by:</p>
+<ol type="1">
+<li>Creating a valid gradebook + key pair.</li>
+<li>Filling the gradebook with valid student information.</li>
+<li>Encrypting the data and writing it to a file.</li>
+</ol>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean any previoulsy built files and make a fresh one</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> clean</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> mygradebook</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="ex">./setup</span> <span class="at">-N</span> mygradebook</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Ask the user the input the key generated by the program</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="bu">read</span> <span class="at">-p</span> <span class="st">&quot;Input The Key Printed Above : &quot;</span> <span class="va">key</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;Key is: </span><span class="va">$key</span><span class="st">&quot;</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="ex">./gradebookadd</span> <span class="at">-N</span> mygradebook <span class="at">-K</span> <span class="va">$key</span> <span class="at">-AS</span> <span class="at">-FN</span> John <span class="at">-LN</span> Smith</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="ex">./gradebookadd</span> <span class="at">-N</span> mygradebook <span class="at">-K</span> <span class="va">$key</span> <span class="at">-AS</span> <span class="at">-FN</span> Russell <span class="at">-LN</span> Tyler</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="ex">./gradebookadd</span> <span class="at">-N</span> mygradebook <span class="at">-K</span> <span class="va">$key</span> <span class="at">-AS</span> <span class="at">-FN</span> Ted <span class="at">-LN</span> Mason</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="ex">./gradebookadd</span> <span class="at">-N</span> mygradebook <span class="at">-K</span> <span class="va">$key</span> <span class="at">-AA</span> <span class="at">-AN</span> Midterm <span class="at">-P</span> 100 <span class="at">-W</span> 0.25</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="ex">./gradebookadd</span> <span class="at">-N</span> mygradebook <span class="at">-K</span> <span class="va">$key</span> <span class="at">-AG</span> <span class="at">-AN</span> Midterm <span class="at">-FN</span> John <span class="at">-LN</span> Smith <span class="at">-G</span> 95</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="ex">./gradebookadd</span> <span class="at">-N</span> mygradebook <span class="at">-K</span> <span class="va">$key</span> <span class="at">-AG</span> <span class="at">-AN</span> Midterm <span class="at">-FN</span> Russell <span class="at">-LN</span> Tyler <span class="at">-G</span> 80</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="ex">./gradebookadd</span> <span class="at">-N</span> mygradebook <span class="at">-K</span> <span class="va">$key</span> <span class="at">-AG</span> <span class="at">-AN</span> Midterm <span class="at">-FN</span> Ted <span class="at">-LN</span> Mason <span class="at">-G</span> 90</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="ex">./gradebookadd</span> <span class="at">-N</span> mygradebook <span class="at">-K</span> <span class="va">$key</span> <span class="at">-AA</span> <span class="at">-AN</span> Final <span class="at">-P</span> 200 <span class="at">-W</span> 0.5</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="ex">./gradebookadd</span> <span class="at">-N</span> mygradebook <span class="at">-K</span> <span class="va">$key</span> <span class="at">-AG</span> <span class="at">-AN</span> Final <span class="at">-FN</span> John <span class="at">-LN</span> Smith <span class="at">-G</span> 180</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="ex">./gradebookadd</span> <span class="at">-N</span> mygradebook <span class="at">-K</span> <span class="va">$key</span> <span class="at">-AG</span> <span class="at">-AN</span> Final <span class="at">-FN</span> Russell <span class="at">-LN</span> Tyler <span class="at">-G</span> 190</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="ex">./gradebookadd</span> <span class="at">-N</span> mygradebook <span class="at">-K</span> <span class="va">$key</span> <span class="at">-AG</span> <span class="at">-AN</span> Final <span class="at">-FN</span> Ted <span class="at">-LN</span> Mason <span class="at">-G</span> 195</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a><span class="ex">./gradebookadd</span> <span class="at">-N</span> mygradebook <span class="at">-K</span> <span class="va">$key</span> <span class="at">-AA</span> <span class="at">-AN</span> Project <span class="at">-P</span> 50 <span class="at">-W</span> 0.25</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="ex">./gradebookadd</span> <span class="at">-N</span> mygradebook <span class="at">-K</span> <span class="va">$key</span> <span class="at">-AG</span> <span class="at">-AN</span> Project <span class="at">-FN</span> John <span class="at">-LN</span> Smith <span class="at">-G</span> 48</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a><span class="ex">./gradebookadd</span> <span class="at">-N</span> mygradebook <span class="at">-K</span> <span class="va">$key</span> <span class="at">-AG</span> <span class="at">-AN</span> Project <span class="at">-FN</span> Russell <span class="at">-LN</span> Tyler <span class="at">-G</span> 49</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a><span class="ex">./gradebookadd</span> <span class="at">-N</span> mygradebook <span class="at">-K</span> <span class="va">$key</span> <span class="at">-AG</span> <span class="at">-AN</span> Project <span class="at">-FN</span> Ted <span class="at">-LN</span> Mason <span class="at">-G</span> 50</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a></span></code></pre></div>
+<h3 id="modifying-the-gradebook">Modifying the Gradebook</h3>
+<p>This script will initiate the attack by changing the 189th and 190th characters on the second line of the encrypted gradebook file to zeros.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="va">path</span><span class="op">=</span><span class="st">&quot;mygradebook&quot;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="va">line</span><span class="op">=</span>2</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="va">position1</span><span class="op">=</span>189</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="va">position2</span><span class="op">=</span>190</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Substituting characters at positions 189 and 190 to corrupt assignment data.</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Any character substitution at positions 185 to 192 will result in Ted's</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># final and midterm assignments being corrupted, so we are arbitrarily choosing</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co"># two of these locations to ensure a successful attack.</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="fu">sed</span> <span class="at">-i</span> <span class="st">&quot;</span><span class="va">${line_number}</span><span class="st">s/./0/</span><span class="va">${position1}</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$path</span><span class="st">&quot;</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="fu">sed</span> <span class="at">-i</span> <span class="st">&quot;</span><span class="va">${line_number}</span><span class="st">s/./0/</span><span class="va">${position2}</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$path</span><span class="st">&quot;</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;Gradebook Exploited. Ted is now failing.&quot;</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;&quot;</span></span></code></pre></div>
+<h3 id="displaying-the-gradebook">Displaying the Gradebook</h3>
+<p>This script will use the key to display the gradebook before and after the exploit.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="bu">read</span> <span class="at">-p</span> <span class="st">&quot;Input The Key : &quot;</span> <span class="va">key</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;Key is: </span><span class="va">$key</span><span class="st">&quot;</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;Grades of midterm:&quot;</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="ex">./gradebookdisplay</span> <span class="at">-N</span> mygradebook <span class="at">-K</span> <span class="va">$key</span> <span class="at">-PA</span> <span class="at">-A</span> <span class="at">-AN</span> Midterm</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;Grades of project:&quot;</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="ex">./gradebookdisplay</span> <span class="at">-N</span> mygradebook <span class="at">-K</span> <span class="va">$key</span> <span class="at">-PA</span> <span class="at">-A</span> <span class="at">-AN</span> Project</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;Grades of final:&quot;</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="ex">./gradebookdisplay</span> <span class="at">-N</span> mygradebook <span class="at">-K</span> <span class="va">$key</span> <span class="at">-PA</span> <span class="at">-A</span> <span class="at">-AN</span> Final</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;Final grades:&quot;</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="ex">./gradebookdisplay</span> <span class="at">-N</span> mygradebook <span class="at">-K</span> <span class="va">$key</span> <span class="at">-PF</span> <span class="at">-G</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;&quot;</span></span></code></pre></div>
+<h2 id="the-result">The Result</h2>
+<p>This attack works because the gradebook program does not authenticate gradebook files properly. In the encryptData function, gradebooks are encrypted using AES without a specified CBC mode. The implementation does not explicitly include parameters for an AEAD mode like GCM, so we know that the encryption does not provide authenticity or integrity by default. Below are some screenshots of the exploit in action.</p>
+<figure>
+<img src="../images/gradebook-setup.png" alt="Constructing the Gradebook" />
+<figcaption aria-hidden="true">Constructing the Gradebook</figcaption>
+</figure>
+<p>Notice how Ted has the best final grade before the exploit is executed.</p>
+<figure>
+<img src="../images/gradebook-initial.png" alt="The Original Gradebook" />
+<figcaption aria-hidden="true">The Original Gradebook</figcaption>
+</figure>
+<p>Notice how Ted has a failing grade after the gradebook is modified.</p>
+<figure>
+<img src="../images/gradebook-exploit.png" alt="The Exploited Gradebook" />
+<figcaption aria-hidden="true">The Exploited Gradebook</figcaption>
+</figure>
+        
+        Last modified 2025-7-23
+        
+    </section>
+</article>
+</main>
+        <footer class="flex flex-col mt-12 mb-8 space-y-4">
+    <div class="flex justify-center">
+        <a aria-label="Link to Email" class="footer-icon" href="mailto:dhan4043@gmail.com">
+            <i class="icon-mail"></i>
+        </a>
+        <a aria-label="Link to GitHub" class="footer-icon" href="https://github.com/dhan4043">
+            <i class="icon-github"></i>
+        </a>
+    </div>
+    <div class="text-center">
+        Site generated by
+        <a href="http://jaspervdj.be/hakyll">Hakyll</a>.
+        Source on 
+        <a href="https://github.com/dhan4043/haskell-profile">GitHub</a>.
+    </div>
+</footer>
+
+    </body>
+</html>

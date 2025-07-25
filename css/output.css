@@ -236,9 +236,6 @@
   .grid {
     display: grid;
   }
-  .inline {
-    display: inline;
-  }
   .h-3 {
     height: calc(var(--spacing) * 3);
   }
@@ -247,6 +244,9 @@
   }
   .flex-auto {
     flex: auto;
+  }
+  .grow {
+    flex-grow: 1;
   }
   .grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
