@@ -130,7 +130,7 @@ article img {
 }
 
 article figcaption {
-  @apply mt-2 mb-5 text-sm text-center text-gray-500;
+  @apply mt-2 mb-5 text-sm text-center text-gray-500 font-mono;
 }
 
 .entry-list {
