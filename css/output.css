@@ -563,10 +563,13 @@ article figcaption {
   margin-top: calc(var(--spacing) * 2);
   margin-bottom: calc(var(--spacing) * 5);
   text-align: center;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: var(--text-sm);
   line-height: var(--tw-leading, var(--text-sm--line-height));
   color: var(--color-gray-500);
+}
+article a.footnote-ref {
+  text-decoration: none;
 }
 .entry-list {
   margin: calc(var(--spacing) * 0);

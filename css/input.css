@@ -130,7 +130,11 @@ article img {
 }
 
 article figcaption {
-  @apply mt-2 mb-5 text-sm text-center text-gray-500 font-mono;
+  @apply mt-2 mb-5 text-sm text-center text-gray-500 font-sans;
+}
+
+article a.footnote-ref {
+  text-decoration: none;
 }
 
 .entry-list {
