@@ -1,9 +1,10 @@
-@import "https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap";
+@import "https://fonts.googleapis.com/css2?family=Charis+SIL:ital,wght@0,400;0,700;1,400;1,700&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap";
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Roboto", sans-serif;
   --font-mono: "Roboto Mono", monospace;
+  --font-serif: "Charis SIL", serif;
 }
 
 @font-face {
@@ -39,15 +40,15 @@
 }
 
 header {
-  @apply flex flex-wrap my-4 sm:my-10 justify-between sm:justify-center;
+  @apply flex flex-wrap my-4 sm:my-10 justify-between sm:justify-center font-serif;
 }
 
 body {
-  @apply flex flex-col min-h-screen p-4 sm:p-4 max-w-2xl mx-auto text-slate-800 bg-amber-50;
+  @apply flex flex-col min-h-screen p-4 sm:p-4 max-w-2xl mx-auto text-slate-800 bg-amber-50 font-serif;
 }
 
 footer a {
-  @apply text-yellow-600;
+  @apply text-yellow-600 font-serif;
 }
 
 .footer-icon {
@@ -75,7 +76,7 @@ article h4 {
 }
 
 article p {
-  @apply mb-6;
+  @apply mb-6 font-serif;
 }
 
 article a {
@@ -222,8 +223,13 @@ pre.numberSource code > span > a:first-child::before
     color: #aaaaaa;
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-div.sourceCode
-  {  background-color: #fffdf5; padding: 0.5em; border: #aaa 1px solid; font-size: 0.9em; }
+div.sourceCode 
+  { background-color: #fffdf5; 
+    padding: 0.5em; 
+    border: #aaa 1px solid; 
+    font-size: 0.9em; 
+    font-family: monospace;
+  }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }

@@ -1,10 +1,11 @@
 /*! tailwindcss v4.1.10 | MIT License | https://tailwindcss.com */
-@import "https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap";
+@import "https://fonts.googleapis.com/css2?family=Charis+SIL:ital,wght@0,400;0,700;1,400;1,700&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap";
 @layer properties;
 @layer theme, base, components, utilities;
 @layer theme {
   :root, :host {
     --font-sans: "Roboto", sans-serif;
+    --font-serif: "Charis SIL", serif;
     --font-mono: "Roboto Mono", monospace;
     --color-amber-50: oklch(98.7% 0.022 95.277);
     --color-amber-100: oklch(96.2% 0.059 95.617);
@@ -197,6 +198,9 @@
   .relative {
     position: relative;
   }
+  .static {
+    position: static;
+  }
   .-start-1\.5 {
     inset-inline-start: calc(var(--spacing) * -1.5);
   }
@@ -230,11 +234,17 @@
   .mb-8 {
     margin-bottom: calc(var(--spacing) * 8);
   }
+  .block {
+    display: block;
+  }
   .flex {
     display: flex;
   }
   .grid {
     display: grid;
+  }
+  .inline {
+    display: inline;
   }
   .h-3 {
     height: calc(var(--spacing) * 3);
@@ -410,6 +420,7 @@ header {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  font-family: var(--font-serif);
   @media (width >= 40rem) {
     margin-block: calc(var(--spacing) * 10);
   }
@@ -425,12 +436,14 @@ body {
   flex-direction: column;
   background-color: var(--color-amber-50);
   padding: calc(var(--spacing) * 4);
+  font-family: var(--font-serif);
   color: var(--color-slate-800);
   @media (width >= 40rem) {
     padding: calc(var(--spacing) * 4);
   }
 }
 footer a {
+  font-family: var(--font-serif);
   color: var(--color-yellow-600);
 }
 .footer-icon {
@@ -479,6 +492,7 @@ article h4 {
 }
 article p {
   margin-bottom: calc(var(--spacing) * 6);
+  font-family: var(--font-serif);
 }
 article a {
   --tw-font-weight: var(--font-weight-medium);
@@ -569,7 +583,7 @@ article figcaption {
   width: 100%;
   border-radius: var(--radius-lg);
   object-fit: cover;
-  --tw-brightness: brightness(75%);
+  --tw-brightness: brightness(85%);
   filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
   --tw-grayscale: grayscale(100%);
   filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
@@ -767,6 +781,7 @@ div.sourceCode {
   padding: 0.5em;
   border: #aaa 1px solid;
   font-size: 0.9em;
+  font-family: monospace;
 }
 @media screen {
   pre > code.sourceCode > span > a:first-child::before {
