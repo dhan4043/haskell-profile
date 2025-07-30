@@ -37,8 +37,8 @@ Pursuing CompTIA Network+ certification.
 - Compilers / programming language design
 - Data security
 - Online privacy law
-- Baseball analytics
 - Environmental policy
+- Sports Analytics
 - Hiking
 - Coffee
 - Cooking / baking
