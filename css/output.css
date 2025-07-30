@@ -4,9 +4,9 @@
 @layer theme, base, components, utilities;
 @layer theme {
   :root, :host {
-    --font-sans: "Roboto", sans-serif;
-    --font-serif: "Charis SIL", serif;
-    --font-mono: "Roboto Mono", monospace;
+    --font-sans: "Roboto", "sans-serif";
+    --font-serif: "Charis SIL", "serif";
+    --font-mono: "Roboto Mono", "monospace";
     --color-amber-50: oklch(98.7% 0.022 95.277);
     --color-amber-100: oklch(96.2% 0.059 95.617);
     --color-yellow-300: oklch(90.5% 0.182 98.111);

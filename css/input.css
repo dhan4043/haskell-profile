@@ -2,9 +2,9 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Roboto", sans-serif;
-  --font-mono: "Roboto Mono", monospace;
-  --font-serif: "Charis SIL", serif;
+  --font-sans: "Roboto", "sans-serif";
+  --font-mono: "Roboto Mono", "monospace";
+  --font-serif: "Charis SIL", "serif";
 }
 
 @font-face {
