@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Taking a Look at my Spotify Data Export</title>
+        <link rel="stylesheet" type="text/css" href="../css/output.css" />
+        <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png" />
+    <link rel="manifest" href="../images/site.webmanifest" />
+    </head>
+    <body>
+        <header>
+  <div id="logo">
+    <a href="../">David Han</a>
+  </div>
+</header>
+
+        <main><article>
+    <section class="header">
+        <div class="text-sm font-mono text-slate-600">
+            12 May 2025
+        </div>
+        <h1 class="my-1">Taking a Look at my Spotify Data Export</h1>
+    </section>
+    <hr>
+    <section>
+        <h2 id="what-is-a-data-export">What is a Data Export?</h2>
+<p>Simply put, a data export is a collection of personal information held by a company about a particular user. While they seem rather mundane, data exports are a hot topic in the world of online privacy, due to the commidification of personal data and concerns surrounding data collection/surveillance. In the eyes of many privacy advocates, data exports allow for transparency and accountability (i.e. what data is collected about you and why/how it is used). Furthermore, preventing users from accessing, correcting, or deleting their personal information can lead to significant privacy risks. For example, a user living in a state with anti-abortion laws may want to erase location data that reveals their presence at an abortion clinic. These days, most large tech companies offer free data exports to their users regardless of the jurisdiction they operate under, but this is not done purely out of goodwill. Companies that serve multiple regions are required to abide by the different online privacy laws enforced within them. The most prominent example of this is the EU’s General Data Protection Regulation (GDPR), which applies to all companies that serve consumers within the EU. Coincidentally, many of the large tech companies that offer free data exports to all of their users serve the EU; these include, Google, Facebook, Twitter or X, and Spotify. Under article 15 of the GDPR, consumers have the right to request a copy of their personal information processed by a company, and the purposes of data processing/collection. In certain circumstances though, companies are allowed to withhold personal information requested by a user (e.g. if the information gives away a trade secret). Overall, the biggest flaw of the GDPR and similar legislation is that they do not set a standard for data export formatting and quality, so the export experience can vary drastically from company to company.</p>
+<h2 id="my-experience-with-data-exports">My Experience with Data Exports</h2>
+<p>To get a feel for the data export process, I decided to request a copy of my personal data from Spotify, as I have been using their service for about ten years. If you want to see their official documentation on data exports and article 15 of the GDPR, visit <a href="https://www.spotify.com/us/legal/gdpr-article-15-information/">this</a> page. In short, Spotify does a satisfactory job of describing what personal data you will receive in your export, how it is formatted, and how to interpret it. That being said, the waiting period may cause some frustration. The first portion of my export, which contained my account data and streaming history, only took one day to arrive via email. However the second portion of my export, containing technical log information, took nearly three weeks. So if you need this data ASAP, prepare to be disappointed.</p>
+<h2 id="sample-data">Sample Data</h2>
+<p>While I do not feel like sharing all of my Spotify data, I am fine with showing some samples for any readers that do not plan on requesting data from Spotify. Descriptions for some of the data parameters were provided by Spotify, and can be found in <a href="https://github.com/dhan4043/my-spotify-data">this</a> repository under the “descriptions” folder.</p>
+<h3 id="account-data">Account Data</h3>
+<p>Account data was provided through a colleection of JSON files separated by category (identifiers, search queries, following/followers, inferences, payments, etc.). My user data was formatted like so:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;username&quot;</span><span class="fu">:</span> <span class="st">&quot;davidhan&quot;</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;email&quot;</span><span class="fu">:</span> <span class="st">&quot;REDACTED&quot;</span><span class="fu">,</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;country&quot;</span><span class="fu">:</span> <span class="st">&quot;US&quot;</span><span class="fu">,</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;createdFromFacebook&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;facebookUid&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;birthdate&quot;</span><span class="fu">:</span> <span class="st">&quot;1999-08-29&quot;</span><span class="fu">,</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;gender&quot;</span><span class="fu">:</span> <span class="st">&quot;male&quot;</span><span class="fu">,</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;postalCode&quot;</span><span class="fu">:</span> <span class="st">&quot;REDACTED&quot;</span><span class="fu">,</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;mobileNumber&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;mobileOperator&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;mobileBrand&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;creationTime&quot;</span><span class="fu">:</span> <span class="st">&quot;2016-12-21&quot;</span><span class="fu">,</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;assuredEstimatedAge&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;assuredAgeMethod&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;assuredAgeTimestamp&quot;</span><span class="fu">:</span> <span class="kw">null</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="streaming-history">Streaming History</h3>
+<p>Streaming data was also provided through a collection of JSON files separated by year and formatted like so:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ts&quot;</span><span class="fu">:</span> <span class="st">&quot;2022-03-28T21:32:17Z&quot;</span><span class="fu">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;platform&quot;</span><span class="fu">:</span> <span class="st">&quot;Windows 10 (10.0.19043; x64; AppX)&quot;</span><span class="fu">,</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ms_played&quot;</span><span class="fu">:</span> <span class="dv">64356</span><span class="fu">,</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;conn_country&quot;</span><span class="fu">:</span> <span class="st">&quot;US&quot;</span><span class="fu">,</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ip_addr&quot;</span><span class="fu">:</span> <span class="st">&quot;129.2.180.141&quot;</span><span class="fu">,</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;master_metadata_track_name&quot;</span><span class="fu">:</span> <span class="st">&quot;Into The Light&quot;</span><span class="fu">,</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;master_metadata_album_artist_name&quot;</span><span class="fu">:</span> <span class="st">&quot;Siouxsie and the Banshees&quot;</span><span class="fu">,</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;master_metadata_album_album_name&quot;</span><span class="fu">:</span> <span class="st">&quot;Juju&quot;</span><span class="fu">,</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;spotify_track_uri&quot;</span><span class="fu">:</span> <span class="st">&quot;spotify:track:01V0Tau0s8AQkUm6ae1rEF&quot;</span><span class="fu">,</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;episode_name&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;episode_show_name&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;spotify_episode_uri&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;audiobook_title&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;audiobook_uri&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;audiobook_chapter_uri&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;audiobook_chapter_title&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;reason_start&quot;</span><span class="fu">:</span> <span class="st">&quot;trackdone&quot;</span><span class="fu">,</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;reason_end&quot;</span><span class="fu">:</span> <span class="st">&quot;logout&quot;</span><span class="fu">,</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;shuffle&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;skipped&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;offline&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;offline_timestamp&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;incognito_mode&quot;</span><span class="fu">:</span> <span class="kw">false</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span></code></pre></div>
+<h2 id="an-in-depth-reflection-on-my-data-export-from-spotify">An In-Depth Reflection on my Data Export from Spotify</h2>
+<p><strong>Does the export request fall under a data protection “right” like the GDPR’s “subject access request?”</strong></p>
+<p>I am not an EU citizen or a resident of California, so technically Spotify is not legally required to send me my personal data. However, Spotify says that they offer data exports to all users in compliance with Article 15 of the GDPR, which guarantees the right of access for data subjects. Streaming history and profile data would fall under “personal data” and “personal data categories” mentioned in Article 15.</p>
+<p><strong>What frustrations did I experience in terms of accessing and understanding my data?</strong></p>
+<p>I did not have any issues with accessing or obtaining my data. The data export page is easy to find, and the request process is pretty simple: just select the data you want to receive (streaming, account, or technical log data). That being said, understanding the data is a little bit more complicated. Spotify provides a README that describes the different labels and parameters in your extended streaming data (e.g. the parameter “conn_country” refers to the country code of the country where the stream was played), but it is definitely imperfect. The README tells you what each label represents, but it does not explain what some of the values actually mean (see the previously linked repository). For example, there is a value called “appload” for the parameter “reason_start” (which tells you why a track started playing), but I can only guess what “appload” refers to. Does “appload” mean that I opened the app, or does it mean that I loaded a song by clicking on it? Additionally, Spotify does not provide a useful README for account data (inferences, identifiers). The README just states your right to access under Article 15 of the GDPR, it does not explain any of the labels or parameters. I have no idea what the inference “1P_Custom_Affinity_Remitly [Advertiser-Specific]” refers to, even
+after a Google search! I can tell it is a first party inference from “1P,” but that is about it. For less
+tech-savvy users they might as well send nothing or redact everything, because it is almost useless in
+its current state.</p>
+<p><strong>What was the most interesting thing I learned during the process?</strong></p>
+<p>The most interesting thing I learned is that I can confidently point out the places I frequently visit based on streaming data alone. IP address information is not always 100% accurate, but the large sample size definitely helps (tens of thousands of streams over years of listening). Mapping the data allowed me to narrow down my highest-activity locations to specific cities; College Park is unsurprisingly one of them. If I only had access to my streaming data, I would still be able to deduce my university with decent certainty.</p>
+<p><strong>Would I say that anything I learned while exploring my data was creepy?</strong></p>
+<p>I would not say that anything I found was “creepy,” but that is partially because Spotify did not give me a ton of data to work with. Motion sensor data definitely has the potential to be creepy, but I did not receive it in my export! A lot of the data was also voluntarily given by me, so I am not really creeped out by it (gender, age, location data).</p>
+<p><strong>To what extent do I think my data export accurately and comprehensively reflects all of the data Spotify has about me?</strong></p>
+<p>I think the data I received is definitely not an accurate or complete reflection of the data Spotify collects about me. For one, I did not receive any meaningful data that is shared with advertisers, and that is not just because I am on an ad-free plan. Many of the inferences made about me are intentionally obfuscated like “1P_Custom_Affinity_Remitly [Advertiser-Specific].” On top of that, there are inconsistencies throughout the data that lead me to believe that Spotify is giving me inaccurate data on purpose. Looking through my streaming data, I can see that Spotify knows what platform/device I listen to music on. I also know that Spotify is aware of my mobile carrier history because of the inferences “1P_Custom_T-Mobile_Switchers [Advertiser-Restricted],” and “1P_Custom_Verizon_Users_All.” However, there is another file that has blank fields for the parameters “mobileOperator,” and “mobileBrand,” even though they clearly have this data.</p>
+<p><strong>How do I think Spotify could have improved the data download process? If I was writing a new regulation to improve the right of access, what would I include?</strong></p>
+<p>Spotify can improve the data export process by providing useful descriptions for data parameters and values. Current descriptions/labels are definitely lackluster and sometimes leave me with more questions than answers. Also, Spotify does not export the recipients of your personal data, which is required by Article 15 of GDPR. Technically, they meet this requirement by stating the categories of recipient in their privacy policy (e.g. advertising partners, technical service partners), but these categories are too broad in my opinion. I think legislation should require companies to provide users with accurate, comprehensive labels alongside their data exports. Companies should also have to name the actual recipients of your personal data, not just categories. It is hard to hold companies accountable for working with potentially bad/controversial actors when they can just hide that information.</p>
+<h2 id="creating-visualizations-with-python">Creating Visualizations with Python</h2>
+<p>Time for something interesting! Since statistical services like Spotify Wrapped are one of the main selling points of Spotify, I decided to create my own visualizations using data from my export and the power of Google Colab. All of the code used to generate the following visuals/stats can be found in <a href="https://github.com/dhan4043/my-spotify-data">this</a> repository.</p>
+<p>Visualizations were grouped into four different categories:</p>
+<ol type="1">
+<li>Descriptives: high-level information (e.g. name, location)</li>
+<li>Engagement: platform usage (e.g. listening time, click counts)</li>
+<li>Inferences: personal information inferred for advertising purposes</li>
+<li>Sensitive: “creepy” or sensitive information collected by the platform</li>
+</ol>
+<p><img src="../images/descriptive.png" alt="Descriptive Visualization" />
+<img src="../images/engagement.png" alt="Engagement Visualization" />
+<img src="../images/inferences.png" alt="Inferences Visualization" />
+<img src="../images/creepiness.png" alt="Sensitive Visualzation" /></p>
+        
+    </section>
+</article>
+</main>
+        <footer class="flex flex-col mt-12 mb-8 space-y-4">
+    <div class="flex justify-center">
+        <a aria-label="Link to Email" class="footer-icon" href="mailto:dhan4043@gmail.com">
+            <i class="icon-mail"></i>
+        </a>
+        <a aria-label="Link to GitHub" class="footer-icon" href="https://github.com/dhan4043">
+            <i class="icon-github"></i>
+        </a>
+    </div>
+    <div class="text-center">
+        Site generated by
+        <a href="http://jaspervdj.be/hakyll">Hakyll</a>.
+        Source on 
+        <a href="https://github.com/dhan4043/haskell-profile">GitHub</a>.
+    </div>
+</footer>
+
+    </body>
+</html>
