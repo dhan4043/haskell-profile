@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Getting a Feel for Randomized Response with ASCII</title>
+        <link rel="stylesheet" type="text/css" href="../css/output.css" />
+        <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png" />
+    <link rel="manifest" href="../images/site.webmanifest" />
+    </head>
+    <body>
+        <header>
+  <div id="logo">
+    <a href="../">David Han</a>
+  </div>
+</header>
+
+        <main><article>
+    <section class="header">
+        <div class="text-sm font-mono text-slate-600">
+            24 Mar 2025
+        </div>
+        <h1 class="my-1">Getting a Feel for Randomized Response with ASCII</h1>
+    </section>
+    <hr>
+    <section>
+        <h2 id="what-is-randomized-response">What is Randomized Response?</h2>
+<p>Suppose one of your professors is conducting a survey on drug use within their classroom. The survey itself consists of simple “yes” or “no” questions that reveal whether you have used certain drugs (illegal and legal). Obviously, there is a bit of a problem here: students probably do not want to admit to their professor that they have used illegal substances. In order to solve this issue, we need to ensure <em>plausible deniability</em><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> for the students who respond to the survey. The easiest way to achieve this is by randomizing all of the responses, but this severely harms the data’s legitimacy/utility. After all, what is the point of conducting a survey if all of the answers are modified in a completely random way? Patterns and trends within the data have to be maintained in some capacity. So how can you randomize the responses in a manner that provides plausible deniability for the students without sacrificing utility?</p>
+<p>At first glance, this problem seems nearly impossible to solve, but with some clever math we can guarantee plausible deniability while preserving data quality. “Randomized response” refers to any protocol that adds noise to responses in order to obscure true answers and reduce false reporting. The reason why these protocols do not ruin data quality is because they generate noise with known, “biased” algorithms. For example, one well-known randomized response protocol uses a series of coin flips to add noise:</p>
+<ul>
+<li>Flip a coin</li>
+<li>Answer the question truthfully if it is heads</li>
+<li>If it is tails, flip another coin
+<ul>
+<li>If it is heads, respond with “yes” (even if it is not your true answer)</li>
+<li>If it is tails, respond with “no”</li>
+</ul></li>
+</ul>
+<p>Just by looking at the protocol, you might be able to deduce that, on average, half of the respondents will provide truthful answers while the other half provides answers based on the second coin flip. Basically, respondents have plausible deniability because there is a fifty percent chance that they flipped tails first and gave a completely random answer. If you want to see the math that goes behind this protocol, visit <a href="https://cscheid.net/writing/data_science/randomized-response/index.html">this</a> website.</p>
+<h2 id="using-ascii-to-visualize-randomized-response">Using ASCII to Visualize Randomized Response</h2>
+<p>To demonstrate what applying a randomized response protocol to a dataset would actually look like, I wrote a basic Python script that modifies ASCII images (consisting of “@” and ” ” characters) using the coin flip algorithm shown above. The code can be found in <a href="https://github.com/dhan4043/randomized-response">this</a> repository.
+### Original Image</p>
+<figure>
+<img src="../images/without-randomization.png" alt="A Simple Little Umbrella" />
+<figcaption aria-hidden="true">A Simple Little Umbrella</figcaption>
+</figure>
+<h3 id="modified-image">Modified Image</h3>
+<figure>
+<img src="../images/with-randomization.png" alt="A Noisy Little Umbrella" />
+<figcaption aria-hidden="true">A Noisy Little Umbrella</figcaption>
+</figure>
+<p>Notice how you can still see an umbrella through all of the noise. This means that our randomized response protocol preserves general trends/patterns within the data!</p>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1"><p><em>Plausible deniability</em> refers to the ability of a person to deny knowledge or responsibility for actions taken by others, even if they were involved or aware of them.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+        
+    </section>
+</article>
+</main>
+        <footer class="flex flex-col mt-12 mb-8 space-y-4">
+    <div class="flex justify-center">
+        <a aria-label="Link to Email" class="footer-icon" href="mailto:dhan4043@gmail.com">
+            <i class="icon-mail"></i>
+        </a>
+        <a aria-label="Link to GitHub" class="footer-icon" href="https://github.com/dhan4043">
+            <i class="icon-github"></i>
+        </a>
+    </div>
+    <div class="text-center">
+        Site generated by
+        <a href="http://jaspervdj.be/hakyll">Hakyll</a>.
+        Source on 
+        <a href="https://github.com/dhan4043/haskell-profile">GitHub</a>.
+    </div>
+</footer>
+
+    </body>
+</html>
