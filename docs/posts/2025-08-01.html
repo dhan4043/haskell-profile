@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Web Trackers Demystified: Browser Fingerprinting</title>
+        <link rel="stylesheet" type="text/css" href="../css/output.css" />
+        <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="../images/favicon-16x16.png" />
+    <link rel="manifest" href="../images/site.webmanifest" />
+    </head>
+    <body>
+        <header>
+  <div id="logo">
+    <a href="../">David Han</a>
+  </div>
+</header>
+
+        <main><article>
+    <section class="header">
+        <div class="text-sm font-mono text-slate-600">
+            01 Aug 2025
+        </div>
+        <h1 class="my-1">Web Trackers Demystified: Browser Fingerprinting</h1>
+    </section>
+    <hr>
+    <section>
+        <h2 id="overview">Overview</h2>
+<p>Hi, and welcome back to my series on web trackers! In this post, I will be going over browser fingerprinting, and how it is used to uniquely identify individuals on the web. You can find my last post on tracking pixels <a href="../haskell-profile/posts/2025-07-28.html">here</a>.</p>
+<h2 id="stateful-and-stateless-tracking">Stateful and Stateless Tracking</h2>
+<p>Before diving into browser fingerprinting, it is important to review the difference between <em>stateful</em> and <em>stateless</em> tracking methods. In the context of computer science, “state” generally refers to the information that is known or remembered by a system. By default, all web traffic transmitted via HTTP is stateless, meaning there is no link between consecutive requests carried out on the same connection. This lack of persistent storage can be problematic for many modern web applications. For example, how would e-commerce sites function if they were not able to keep track of a customer’s payment information or shopping cart? This is where stateful tracking methods like cookies come into play. Cookies are used to add context to client/server communications and group requests sent over the same connection. Suppose you have an account on the social media site BookFace. Your browser can store your BookFace ID in some file on your device and attach that ID to every request you send to BookFace’s server. This allows BookFace to create personalized sessions for you by grouping requests that contain your unique ID. In short, stateful trackers can collect information about you by placing and retrieving data from files stored in your browser.</p>
+<p>In practice, stateful tracking can be rather invasive: third-party cookies allow websites to see your browsing activity across other sites (e.g. BookFace can see that you visited ChatSnap). If that sounds creepy, then it may be comforting to know that most web browsers allow you to clear your cached data, which covers most stateful trackers. Unfortunately, companies have responded to this by using stateless trackers that are capable of collecting user data without having to store files on the client-side like their stateful counterparts.</p>
+<h2 id="what-is-browser-fingerprinting">What is Browser Fingerprinting?</h2>
+<p>Browser fingerprinting is a form of stateless tracking that relies on analyzing/aggregating browser characteristics, such as font size and screen dimensions. While these characteristics seem very generic, they can create highly unique combinations (“fingerprints”) used to identify individuals. In fact, a study done in 2016 found that up to <a href="https://inria.hal.science/hal-01285470v2/document">91 percent</a> of browser fingerprints are unique. This even applies to browsers in incognito or private mode. There are legitimate use cases for browser fingerprinting (e.g. preventing denial-of-service attacks, account fraud or hijacking, and spotting content scrapers), but the technique has also been used to track users without their consent.</p>
+<h2 id="how-browser-fingerprinting-works">How Browser Fingerprinting Works</h2>
+<p>Browser fingerprints can be generated on any webpage using basic HTML and JavaScript code, similar to tracking pixels. When you visit a website, your browser will automatically execute any fingerprinting code embedded in it and generate a unique fingerprint on the site’s server-side. Implementing this code is also quite simple thanks to the existence of open-source libraries with prebuilt fingerprinting scripts, such as <a href="https://github.com/fingerprintjs/fingerprintjs">FingerprintJS</a>.</p>
+<h2 id="how-to-avoid-browser-fingerprinting">How to Avoid Browser Fingerprinting</h2>
+<p>If you are against browser fingerprinting, you can switch to a web browser that offers built-in protections against it, like <a href="https://support.mozilla.org/en-US/kb/firefox-protection-against-fingerprinting">Firefox</a>. However, it is important to keep in mind that these protections depend on public blocklists of known fingerprinting scripts, so it is unreasonable to believe that they are completely foolproof or comprehensive. Browser extensions are also <a href="https://dl.acm.org/doi/10.1145/3308558.3313703">far from perfect</a> and vary significantly in quality.</p>
+<h2 id="implementing-a-simple-fingerprinting-script">Implementing A Simple Fingerprinting Script</h2>
+<p>One way to implement a fingerprinting script in JavaScript is through the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API">Canvas API</a>. We can use this API to generate fingerprints on a webpage by “drawing” an image whenever someone visits it (this works because images tend to render differently across browsers/systems).</p>
+<p>To be clear, it is hard to judge the uniqueness of a browser fingerprint without comparing it to many other fingerprints, so this example is not incredibly useful. That being said, I still want to include it in order to demonstrate how simple browser fingerprinting is on a technical level.</p>
+<h3 id="source-code">Source Code</h3>
+<p>Drawing an image on a webpage via the Canvas API is quite simple, since there already is a native <code>canvas</code> element in HTML5. We can create a basic canvas with the name “myCanvas” using the following line of code:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- The ID attribute is necessary if we want to reference this specific canvas element in our JavaScript code --&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">canvas</span><span class="ot"> id</span><span class="op">=</span><span class="st">&quot;myCanvas&quot;</span><span class="dt">&gt;&lt;/</span><span class="kw">canvas</span><span class="dt">&gt;</span></span></code></pre></div>
+<p>Now that we have a blank canvas, we can draw a 2D image on it using JavaScript. For the sake of simplicity, our “image” is just going to be a line of text with some colored rectangles added to it. Keep in mind that it is important to use a variety of colors/fonts because it makes rendering differences stand out more. The full JavaScript code looks like this:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">script</span><span class="dt">&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>	<span class="co">// Source code from https://browserleaks.com/canvas#how-does-it-work</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>	<span class="kw">const</span> canvas <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&quot;myCanvas&quot;</span>)<span class="op">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> ctx <span class="op">=</span> canvas<span class="op">.</span><span class="fu">getContext</span>(<span class="st">&quot;2d&quot;</span>)<span class="op">;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> txt <span class="op">=</span> <span class="st">&quot;this is a canvas fingerprint &lt;canvas&gt; 1.0&quot;</span><span class="op">;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Using a very common typeface</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    ctx<span class="op">.</span><span class="at">textBaseline</span> <span class="op">=</span> <span class="st">&quot;top&quot;</span><span class="op">;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    ctx<span class="op">.</span><span class="at">font</span> <span class="op">=</span> <span class="st">&quot;14px 'Arial'&quot;</span><span class="op">;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    ctx<span class="op">.</span><span class="at">textBaseline</span> <span class="op">=</span> <span class="st">&quot;alphabetic&quot;</span><span class="op">;</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Using a variety of colors to emphasize rendering differences</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    ctx<span class="op">.</span><span class="at">fillStyle</span> <span class="op">=</span> <span class="st">&quot;#f60&quot;</span><span class="op">;</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    ctx<span class="op">.</span><span class="fu">fillRect</span>(<span class="dv">125</span><span class="op">,</span><span class="dv">1</span><span class="op">,</span><span class="dv">62</span><span class="op">,</span><span class="dv">20</span>)<span class="op">;</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    ctx<span class="op">.</span><span class="at">fillStyle</span> <span class="op">=</span> <span class="st">&quot;#069&quot;</span><span class="op">;</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    ctx<span class="op">.</span><span class="fu">fillText</span>(txt<span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">15</span>)<span class="op">;</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    ctx<span class="op">.</span><span class="at">fillStyle</span> <span class="op">=</span> <span class="st">&quot;rgba(102, 204, 0, 0.7)&quot;</span><span class="op">;</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    ctx<span class="op">.</span><span class="fu">fillText</span>(txt<span class="op">,</span> <span class="dv">4</span><span class="op">,</span> <span class="dv">17</span>)<span class="op">;</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">script</span><span class="dt">&gt;</span></span></code></pre></div>
+<p>Now all we have to do is slap this HTML/JS on a webpage and host it! For hosting, I decided to use <a href="https://developers.google.com/apps-script">Google Apps Script</a>, since the service is free and easy to set up. The final webpage can be accessed <a href="https://script.google.com/macros/s/AKfycbxMWdphDoEqxDkdhMHUR3VnY53sX-iH5Rsvk1bvFWwY_CFsOGs4VPTqNXjwFwWVDCVv/exec">here</a>.</p>
+<h3 id="results">Results</h3>
+<p>Here is what my browser fingerprint looks like when I visit the URL in Google Chrome. Try it for yourself and see how yours compares to mine! All of the files used for this example can be found in <a href="https://github.com/dhan4043/canvas-fingerprinting">this</a> GitHub repository.</p>
+<figure>
+<img src="../images/my-browser-fingerprint.png" alt="My Canvas Fingerprint" />
+<figcaption aria-hidden="true">My Canvas Fingerprint</figcaption>
+</figure>
+        
+    </section>
+</article>
+</main>
+        <footer class="flex flex-col mt-12 mb-8 space-y-4">
+    <div class="flex justify-center">
+        <a aria-label="Link to Email" class="footer-icon" href="mailto:dhan4043@gmail.com">
+            <i class="icon-mail"></i>
+        </a>
+        <a aria-label="Link to GitHub" class="footer-icon" href="https://github.com/dhan4043">
+            <i class="icon-github"></i>
+        </a>
+    </div>
+    <div class="text-center">
+        Site generated by
+        <a href="http://jaspervdj.be/hakyll">Hakyll</a>.
+        Source on 
+        <a href="https://github.com/dhan4043/haskell-profile">GitHub</a>.
+    </div>
+</footer>
+
+    </body>
+</html>

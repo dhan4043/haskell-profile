@@ -15,6 +15,7 @@ $partial("templates/timeline.html")$
 :::
 ## Credentials
 ::: { .certification }
+- [Microsoft SC-900 Certified: Security, Compliance, and Identity Fundamentals][ms-sc900-cert]
 - [Microsoft Applied Skills: Microsoft Defender XDR][ms-xdr-cred]
 - [Fortinet Certified Cybersecurity Fundamentals][fortinet-cred]
 - [IBM Cybersecurity Fundamentals][ibm-cred]
@@ -22,13 +23,14 @@ $partial("templates/timeline.html")$
 :::
 ## Currently
 ::: { .currently }
-Pursuing CompTIA Network+ certification.
+Pursuing Microsoft MS-102 (Microsoft 365 Administrator) certification.
 ::: 
 ## Links
 ::: { .badges }
 - [Email][email]
 - [GitHub][github]
 - [Portfolium][portfolium]
+- [Indeed][indeed]
 :::
 ## Interests
 ::: { .interests }
@@ -58,7 +60,9 @@ $partial("templates/post-list.html")$
 [email]: mailto:dhan4043@gmail.com
 [github]: https://github.com/dhan4043
 [portfolium]: https://portfolium.com/DavidHan4311
+[indeed]: https://portfolium.com/DavidHan4311
 [fire-cred]: https://portfolium.com/DavidHan4311/badge/researcher-fire-first-year-innovation-and-research-experience
 [ibm-cred]: https://www.credly.com/badges/1ce0b810-2617-4ad2-ae06-429bd8abc216/public_url
+[ms-sc900-cert]: https://learn.microsoft.com/api/credentials/share/en-us/DavidHan-5404/250AA37A2CF6AE36?sharingId=806CD6648DA2C6A
 [ms-xdr-cred]: https://learn.microsoft.com/api/credentials/share/en-us/DavidHan-5404/45D10A1B0A29DF9D?sharingId=806CD6648DA2C6A
 [fortinet-cred]: https://www.credly.com/badges/263ff0b1-7ccf-46f7-826e-0b906d78b53e/public_url
