@@ -59,7 +59,7 @@ $partial("templates/post-list.html")$
 
 [email]: mailto:dhan4043@gmail.com
 [github]: https://github.com/dhan4043
-[portfolium]: https://portfolium.com/DavidHan4311
+[portfolium]: https://portfolium.com/DavidHan4043
 [indeed]: https://profile.indeed.com/p/davidh-msnfs99
 [fire-cred]: https://portfolium.com/DavidHan4311/badge/researcher-fire-first-year-innovation-and-research-experience
 [ibm-cred]: https://www.credly.com/badges/1ce0b810-2617-4ad2-ae06-429bd8abc216/public_url
