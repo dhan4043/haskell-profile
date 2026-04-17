@@ -23,7 +23,7 @@ $partial("templates/timeline.html")$
 :::
 ## Currently
 ::: { .currently }
-Pursuing Microsoft MS-102 (Microsoft 365 Administrator) certification.
+Pursuing COMPTIA A+ and Microsoft MS-102 (Microsoft 365 Administrator) certifications.
 ::: 
 ## Links
 ::: { .badges }
